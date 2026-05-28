@@ -219,8 +219,8 @@ if (file.exists(metrics_file)) {
     geom_col(position = position_dodge(width = 0.8), width = 0.7) +
     theme_minimal(base_size = 12) +
     labs(
-      title = "External validation performance by gene signature",
-      x = "Gene signature",
+      title = "Rendiment de la validació externa per signatura gènica",
+      x = "Signatura gènica",
       y = "AUC",
       fill = "Dataset"
     ) +

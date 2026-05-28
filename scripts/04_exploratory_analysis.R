@@ -56,10 +56,10 @@ p <- ggplot(pca_df, aes(x = PC1, y = PC2, color = response)) +
   geom_point(size = 3) +
   theme_minimal() +
   labs(
-    title = "PCA of GSE160638 expression data",
+    title = "PCA de les dades d'expressió de GSE160638",
     x = "PC1",
     y = "PC2",
-    color = "Response"
+    color = "Resposta"
   )
 
 print(p)

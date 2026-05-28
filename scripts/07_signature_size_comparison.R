@@ -443,9 +443,9 @@ p_auc <- ggplot(all_metrics, aes(x = factor(signature_size), y = AUC, group = 1)
   geom_line() +
   theme_minimal() +
   labs(
-    title = "Comparison of AUC by signatue size",
-    x = "Number of genes selected per fold",
-    y = "Global CV AUC"
+    title = "Comparació de l’AUC segons la mida de la signatura",
+    x = "Nombre de gens seleccionats per fold",
+    y = "AUC global en CV"
   )
 
 ggsave(
@@ -539,7 +539,7 @@ p_auc_fold <- ggplot(all_fold_metrics, aes(x = factor(signature_size), y = AUC))
   labs(
     title = "Distribució de l'AUC per fold segons la mida de la signatura",
     x = "Nombre de gens seleccionats per fold",
-    y = "AUC por fold"
+    y = "AUC per fold"
   )
 
 ggsave(

@@ -362,7 +362,7 @@ png(
 )
 plot(
   roc_obj,
-  main = paste("ROC curve - Random Forest final 100-gene signature (AUC =", round(auc_value, 3), ")"),
+  main = paste("Corba ROC - Random Forest signatura final 100-gens (AUC =", round(auc_value, 3), ")"),
   col = "darkblue",
   lwd = 3
 )
@@ -372,7 +372,7 @@ p_stability <- ggplot(stability_summary, aes(x = factor(n_folds_selected), y = n
   geom_bar(stat = "identity") +
   theme_minimal() +
   labs(
-    title = "Distribució d'estabilitat gènica - firma final de 100 gens",
+    title = "Distribució d'estabilitat gènica - signatura final de 100 gens",
     x = "Nombre de folds en els que va ser seleccionat",
     y = "Nombre de gens"
   )
@@ -445,9 +445,9 @@ p_imp <- ggplot(
   coord_flip() +
   theme_minimal() +
   labs(
-    title = "Top 20 gens per importància en RF - firma final 100 gens",
+    title = "Top 20 gens per importància en RF - signatura final 100 gens",
     x = "Gen",
-    y = "Mean Decrease Accuracy"
+    y = "Disminució mitjana de l’accuracy"
   )
 
 ggsave(
@@ -459,7 +459,7 @@ ggsave(
 )
 
 cat("\n===========================\n")
-cat("RESUM FINAL - FIRMA 100 GENS\n")
+cat("RESUM FINAL - SIGNATURA 100 GENS\n")
 cat("===========================\n")
 cat("Nombre de mostres:", ncol(counts), "\n")
 cat("Nombre de folds:", outer_folds, "\n")

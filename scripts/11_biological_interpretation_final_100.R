@@ -126,12 +126,12 @@ annotation_col <- data.frame(Response = as.character(metadata$response))
 rownames(annotation_col) <- metadata$sample_id
 
 annotation_col$Response <- trimws(tolower(annotation_col$Response))
-annotation_col$Response[annotation_col$Response %in% c("r", "responder", "response", "yes", "y", "1")] <- "Responder"
-annotation_col$Response[annotation_col$Response %in% c("nr", "non-responder", "nonresponder", "non responder", "no", "n", "0")] <- "Non-responder"
-annotation_col$Response <- factor(annotation_col$Response, levels = c("Responder", "Non-responder"))
+annotation_col$Response[annotation_col$Response %in% c("r", "responder", "response", "yes", "y", "1")] <- "Responedor"
+annotation_col$Response[annotation_col$Response %in% c("nr", "non-responder", "nonresponder", "non responder", "no", "n", "0")] <- "No responedor"
+annotation_col$Response <- factor(annotation_col$Response, levels = c("Responedor", "No responedor"))
 
 ann_colors <- list(
-  Response = c("Responder" = "#1b9e77", "Non-responder" = "#d95f02")
+  Response = c("Responedor" = "#1b9e77", "No responedor" = "#d95f02")
 )
 
 png(
@@ -224,25 +224,25 @@ if (!is.null(ereact)) {
 
 if (nrow(as.data.frame(ego_bp)) > 0) {
   png(file.path(figures_dir, "dotplot_GO_BP_stable_4plus_final_100.png"), width = 2200, height = 1400, res = 200)
-  print(dotplot(ego_bp, showCategory = 12, font.size = 12, title = "GO Biological Process"))
+  print(dotplot(ego_bp, showCategory = 12, font.size = 12, title = "Processos biològics GO"))
   dev.off()
 }
 
 if (nrow(as.data.frame(ego_mf)) > 0) {
   png(file.path(figures_dir, "dotplot_GO_MF_stable_4plus_final_100.png"), width = 2200, height = 1400, res = 200)
-  print(dotplot(ego_mf, showCategory = 12, font.size = 12, title = "GO Molecular Function"))
+  print(dotplot(ego_mf, showCategory = 12, font.size = 12, title = "Functions moleculars GO"))
   dev.off()
 }
 
 if (nrow(as.data.frame(ekegg)) > 0) {
   png(file.path(figures_dir, "dotplot_KEGG_stable_4plus_final_100.png"), width = 2200, height = 1400, res = 200)
-  print(dotplot(ekegg, showCategory = 12, font.size = 12, title = "KEGG pathways"))
+  print(dotplot(ekegg, showCategory = 12, font.size = 12, title = "Vies KEGG"))
   dev.off()
 }
 
 if (!is.null(ereact) && nrow(as.data.frame(ereact)) > 0) {
   png(file.path(figures_dir, "dotplot_Reactome_stable_4plus_final_100.png"), width = 2200, height = 1400, res = 200)
-  print(dotplot(ereact, showCategory = 12, font.size = 12, title = "Reactome pathways"))
+  print(dotplot(ereact, showCategory = 12, font.size = 12, title = "Vies Reactome"))
   dev.off()
 }
 

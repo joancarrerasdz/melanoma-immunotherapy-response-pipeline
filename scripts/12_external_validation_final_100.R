@@ -682,7 +682,7 @@ for (ds in external_datasets) {
   )
   plot(
     roc_obj_ds,
-    main = paste("ROC curve -", ds, "(AUC =", round(auc_ds, 3), ")"),
+    main = paste("Corba ROC -", ds, "(AUC =", round(auc_ds, 3), ")"),
     col = "darkblue",
     lwd = 3
   )
@@ -741,7 +741,7 @@ png(
 )
 plot(
   roc_combined,
-  main = paste("ROC curve - Combined external validation (AUC =", round(auc_combined, 3), ")"),
+  main = paste("Corba ROC - Validació externa combinada (AUC =", round(auc_combined, 3), ")"),
   col = "darkblue",
   lwd = 3
 )
@@ -877,3 +877,4 @@ print(all_external_metrics)
 cat("\nMètriques combinades:\n")
 print(combined_metrics)
 cat("===========================\n")
+

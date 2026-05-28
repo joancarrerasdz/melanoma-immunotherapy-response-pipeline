@@ -145,7 +145,7 @@ p2 <- ggplot(top_stable_imp, aes(x = reorder(gene, importance), y = importance))
   labs(
     title = "Top gens estables (>=4 folds) amb major importància exploratòria",
     x = "Gen",
-    y = "Mean Decrease Accuracy"
+    y = "Disminució mitjana de l'accuracy"
   )
 
 ggsave(
