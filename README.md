@@ -1,5 +1,10 @@
 # TFM immunotherapy melanoma pipeline
 
+> [!WARNING]
+> **Results under methodological revalidation**
+>
+> The metrics, gene signatures, and biological interpretations currently included in this repository are historical outputs from the original master's thesis and are being methodologically revalidated. A clinical-endpoint labelling issue was identified in GSE160638; these outputs must not be interpreted as clinically validated evidence. The original academic state is preserved at tag `tfm-original`, and the reconstruction is being developed outside `main`.
+
 This repository contains the R code, input public datasets, figures and result tables for the master's thesis project:
 
 **Validació i optimització d’una signatura molecular predictiva de resposta a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**
