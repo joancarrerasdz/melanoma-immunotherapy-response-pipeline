@@ -188,6 +188,32 @@ message(
   " unique IDs"
 )
 
+# ===================
+# Filter PD1 cohort
+# ===================
+
+clinical_pd1 <- clinical_s2a %>%
+  filter(Cohort == "PD1")
+
+if (nrow(clinical_pd1) != 36L) {
+  stop(
+    "Unexpected PD1 cohort size: ",
+    nrow(clinical_pd1),
+    " patients; expected 36.",
+    call. = FALSE
+  )
+}
+
+if (!all(clinical_pd1$Cohort == "PD1")) {
+  stop("Non-PD1 records remained after cohort filtering.", call. = FALSE)
+}
+
+message(
+  "Filtered PD1 cohort: ",
+  nrow(clinical_pd1),
+  " patients"
+)
+
 # ===========================
 # 1. Carregar counts
 # ===========================
