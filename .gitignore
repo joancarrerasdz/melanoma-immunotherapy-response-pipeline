@@ -25,3 +25,6 @@ cache/
 # Do not ignore final result tables or figures
 !results/*.csv
 !figures/*.png
+
+# Downloaded clinical source caches
+data_raw/clinical/*.xlsx

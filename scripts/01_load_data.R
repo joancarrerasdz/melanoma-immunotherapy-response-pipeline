@@ -17,6 +17,92 @@ data_processed_dir <- file.path(base_dir, "data_processed")
 dir.create(data_processed_dir, showWarnings = FALSE, recursive = TRUE)
 
 # ===========================
+# Official clinical supplement
+# ===========================
+
+clinical_dir <- file.path(data_raw_dir, "clinical")
+dir.create(clinical_dir, showWarnings = FALSE, recursive = TRUE)
+
+table_s2_url <- paste0(
+  "https://ndownloader.figshare.com/files/",
+  "59867554"
+)
+
+table_s2_path <- file.path(
+  clinical_dir,
+  "cir-22-0184_table_s2_suppst2.xlsx"
+)
+
+is_valid_xlsx <- function(path) {
+  if (!file.exists(path)) return(FALSE)
+
+  file_size <- file.info(path)$size
+  if (is.na(file_size) || file_size < 1024) return(FALSE)
+
+  connection <- file(path, open = "rb")
+  on.exit(close(connection), add = TRUE)
+
+  signature <- readBin(connection, what = "raw", n = 2L)
+  identical(signature, charToRaw("PK"))
+}
+
+download_table_s2 <- function(url, destination) {
+  if (is_valid_xlsx(destination)) {
+    message("Using cached Table S2: ", destination)
+    return(invisible(destination))
+  }
+
+  if (file.exists(destination)) {
+    unlink(destination)
+  }
+
+  temporary_file <- tempfile(
+    pattern = "table_s2_",
+    tmpdir = dirname(destination),
+    fileext = ".xlsx"
+  )
+
+  on.exit({
+    if (file.exists(temporary_file)) unlink(temporary_file)
+  }, add = TRUE)
+
+  previous_timeout <- getOption("timeout")
+  on.exit(options(timeout = previous_timeout), add = TRUE)
+  options(timeout = max(300L, previous_timeout))
+
+  status <- utils::download.file(
+    url = url,
+    destfile = temporary_file,
+    mode = "wb",
+    method = "libcurl",
+    quiet = FALSE
+  )
+
+  if (!identical(status, 0L) || !is_valid_xlsx(temporary_file)) {
+    stop(
+      "Table S2 download failed or did not produce a valid XLSX file.",
+      call. = FALSE
+    )
+  }
+
+  if (!file.rename(temporary_file, destination)) {
+    stop("Could not move Table S2 to its final location.", call. = FALSE)
+  }
+
+  message(
+    "Downloaded Table S2: ",
+    destination,
+    " (",
+    file.info(destination)$size,
+    " bytes)"
+  )
+
+  invisible(destination)
+}
+
+download_table_s2(table_s2_url, table_s2_path)
+
+# ===========================
 # 1. Carregar counts
 # ===========================
 
