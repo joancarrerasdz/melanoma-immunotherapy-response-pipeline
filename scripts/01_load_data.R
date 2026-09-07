@@ -214,6 +214,66 @@ message(
   " patients"
 )
 
+# ========================
+# Define clinical endpoint
+# ========================
+
+clinical_pd1 <- clinical_pd1 %>%
+  mutate(
+    response_recist = toupper(trimws(as.character(Response))),
+    response = case_when(
+      response_recist %in% c("CR", "PR") ~ "Responder",
+      response_recist %in% c("SD", "PD") ~ "NonResponder",
+      TRUE ~ NA_character_
+    )
+  )
+
+if (anyNA(clinical_pd1$response)) {
+  stop("Unmapped or missing RECIST response detected.", call. = FALSE)
+}
+
+recist_counts <- table(
+  factor(
+    clinical_pd1$response_recist,
+    levels = c("CR", "PR", "SD", "PD")
+  )
+)
+
+expected_recist_counts <- c(
+  CR = 6L,
+  PR = 16L,
+  SD = 2L,
+  PD = 12L
+)
+
+if (!identical(as.integer(recist_counts), unname(expected_recist_counts))) {
+  stop("Unexpected RECIST response counts.", call. = FALSE)
+}
+
+class_counts <- table(
+  factor(
+    clinical_pd1$response,
+    levels = c("Responder", "NonResponder")
+  )
+)
+
+expected_class_counts <- c(
+  Responder = 22L,
+  NonResponder = 14L
+)
+
+if (!identical(as.integer(class_counts), unname(expected_class_counts))) {
+  stop("Unexpected binary endpoint counts.", call. = FALSE)
+}
+
+message(
+  "RECIST counts: CR=6, PR=16, SD=2, PD=12"
+)
+
+message(
+  "Endpoint counts: Responder=22, NonResponder=14"
+)
+
 # ===========================
 # 1. Carregar counts
 # ===========================
