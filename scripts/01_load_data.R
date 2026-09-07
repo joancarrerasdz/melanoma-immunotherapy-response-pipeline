@@ -102,6 +102,56 @@ download_table_s2 <- function(url, destination) {
 
 download_table_s2(table_s2_url, table_s2_path)
 
+# ============================
+# Read official clinical S2A
+# ============================
+
+available_sheets <- readxl::excel_sheets(table_s2_path)
+
+if (!"S2A" %in% available_sheets) {
+  stop("Required worksheet 'S2A' was not found in Table S2.", call. = FALSE)
+}
+
+clinical_s2a <- readxl::read_excel(
+  path = table_s2_path,
+  sheet = "S2A",
+  skip = 2,
+  na = c("", "NA"),
+  .name_repair = "unique"
+)
+
+names(clinical_s2a)[1] <- "patient_id"
+
+required_s2a_columns <- c("patient_id", "Cohort", "Response")
+missing_s2a_columns <- setdiff(required_s2a_columns, names(clinical_s2a))
+
+if (length(missing_s2a_columns) > 0L) {
+  stop(
+    "Missing required S2A columns: ",
+    paste(missing_s2a_columns, collapse = ", "),
+    call. = FALSE
+  )
+}
+
+if (nrow(clinical_s2a) != 73L || ncol(clinical_s2a) != 21L) {
+  stop(
+    "Unexpected S2A dimensions: ",
+    nrow(clinical_s2a),
+    " rows x ",
+    ncol(clinical_s2a),
+    " columns.",
+    call. = FALSE
+  )
+}
+
+message(
+  "Read Table S2A: ",
+  nrow(clinical_s2a),
+  " rows x ",
+  ncol(clinical_s2a),
+  " columns"
+)
+
 # ===========================
 # 1. Carregar counts
 # ===========================
