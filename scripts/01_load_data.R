@@ -152,6 +152,42 @@ message(
   " columns"
 )
 
+# =============================
+# Normalize patient identifiers
+# =============================
+
+clinical_s2a <- clinical_s2a %>%
+  mutate(
+    patient_id_raw = as.character(patient_id),
+    patient_id = toupper(trimws(patient_id_raw)),
+    patient_id = gsub("[^A-Z0-9]+", "_", patient_id),
+    patient_id = gsub("_+", "_", patient_id),
+    patient_id = gsub("^_+|_+$", "", patient_id),
+    .before = patient_id
+  )
+
+pd1_rows <- !is.na(clinical_s2a$Cohort) &
+  clinical_s2a$Cohort == "PD1"
+
+pd1_ids <- clinical_s2a$patient_id[pd1_rows]
+
+if (
+  anyNA(pd1_ids) ||
+  any(!grepl("^PD1_[0-9]+$", pd1_ids))
+) {
+  stop("Invalid normalized PD1 patient identifier detected.", call. = FALSE)
+}
+
+if (anyDuplicated(pd1_ids) > 0L) {
+  stop("Duplicated PD1 patient identifier detected.", call. = FALSE)
+}
+
+message(
+  "Normalized PD1 identifiers: ",
+  length(pd1_ids),
+  " unique IDs"
+)
+
 # ===========================
 # 1. Carregar counts
 # ===========================
