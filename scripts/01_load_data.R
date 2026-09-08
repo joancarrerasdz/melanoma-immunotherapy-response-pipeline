@@ -464,10 +464,112 @@ message(
   " clinical rows"
 )
 
+# ============================================
+# Generate aligned Day 3 deliverables
+# ============================================
+
+clinical_pd1_aligned <- clinical_pd1[
+  match(colnames(counts_pd1_aligned), clinical_pd1$patient_id),
+  ,
+  drop = FALSE
+]
+
+if (
+  anyNA(clinical_pd1_aligned$patient_id) ||
+  !identical(
+    colnames(counts_pd1_aligned),
+    clinical_pd1_aligned$patient_id
+  )
+) {
+  stop("Invalid alignment of the official PD1 clinical table.", call. = FALSE)
+}
+
+geo_pd1_ids <- grep(
+  "^PD1_[0-9]+$",
+  geo_meta$patient_id,
+  value = TRUE
+)
+
+audit_ids <- unique(
+  c(
+    pd1_count_ids,
+    geo_pd1_ids,
+    clinical_pd1$patient_id
+  )
+)
+
+clinical_join_audit <- tibble(
+  patient_id = audit_ids,
+  in_counts = audit_ids %in% pd1_count_ids,
+  in_geo_metadata = audit_ids %in% geo_pd1_ids,
+  in_table_s2a = audit_ids %in% clinical_pd1$patient_id,
+  count_order = match(audit_ids, colnames(counts_pd1_aligned)),
+  metadata_order = match(audit_ids, meta$patient_id),
+  clinical_order = match(audit_ids, clinical_pd1_aligned$patient_id),
+  status = ifelse(
+    in_counts & in_geo_metadata & in_table_s2a,
+    "matched",
+    "pending"
+  )
+)
+
+pending_correspondences <- sum(
+  clinical_join_audit$status != "matched"
+)
+
+if (
+  nrow(clinical_join_audit) != 36L ||
+  pending_correspondences != 0L
+) {
+  stop(
+    "Clinical join audit detected pending correspondences.",
+    call. = FALSE
+  )
+}
+
 write.csv(
   meta,
-  file.path(data_processed_dir, "metadata_GSE160638.csv"),
+  file.path(
+    data_processed_dir,
+    "metadata_GSE160638.csv"
+  ),
   row.names = FALSE
+)
+
+write.csv(
+  clinical_pd1_aligned,
+  file.path(
+    data_processed_dir,
+    "GSE160638_TableS2A_PD1_clinical.csv"
+  ),
+  row.names = FALSE
+)
+
+saveRDS(
+  counts_pd1_aligned,
+  file.path(
+    data_processed_dir,
+    "GSE160638_raw_counts_PD1_aligned.rds"
+  )
+)
+
+write.csv(
+  clinical_join_audit,
+  file.path(
+    data_processed_dir,
+    "GSE160638_clinical_join_audit.csv"
+  ),
+  row.names = FALSE
+)
+
+message(
+  "Day 3 deliverables validated: 4 files; ",
+  ncol(counts_pd1_aligned),
+  " expression columns; ",
+  nrow(clinical_pd1_aligned),
+  " clinical rows; ",
+  pending_correspondences,
+  " pending correspondences"
 )
 
 cat("\nMetadata generada correctament.\n")

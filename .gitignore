@@ -28,3 +28,6 @@ cache/
 
 # Downloaded clinical source caches
 data_raw/clinical/*.xlsx
+
+# Keep the final aligned PD1 expression matrix
+!data_processed/GSE160638_raw_counts_PD1_aligned.rds
