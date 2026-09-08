@@ -391,6 +391,79 @@ message(
   " PD1 samples"
 )
 
+# ============================================
+# Align PD1 counts and clinical metadata
+# ============================================
+
+if (anyDuplicated(colnames(counts)) > 0L) {
+  stop("Duplicated identifiers found in the count matrix.", call. = FALSE)
+}
+
+if (anyDuplicated(meta$sample_name) > 0L) {
+  stop("Duplicated identifiers found in the clinical metadata.", call. = FALSE)
+}
+
+pd1_count_ids <- grep(
+  "^PD1_[0-9]+$",
+  colnames(counts),
+  value = TRUE
+)
+
+missing_pd1_in_counts <- setdiff(
+  meta$sample_name,
+  pd1_count_ids
+)
+
+extra_pd1_in_counts <- setdiff(
+  pd1_count_ids,
+  meta$sample_name
+)
+
+if (length(missing_pd1_in_counts) > 0L) {
+  stop(
+    "Clinical PD1 identifiers missing from the count matrix: ",
+    paste(missing_pd1_in_counts, collapse = ", "),
+    call. = FALSE
+  )
+}
+
+if (length(extra_pd1_in_counts) > 0L) {
+  stop(
+    "PD1 count columns without clinical metadata: ",
+    paste(extra_pd1_in_counts, collapse = ", "),
+    call. = FALSE
+  )
+}
+
+counts_pd1_aligned <- counts[
+  ,
+  pd1_count_ids,
+  drop = FALSE
+]
+
+meta <- meta[
+  match(colnames(counts_pd1_aligned), meta$sample_name),
+  ,
+  drop = FALSE
+]
+
+if (
+  ncol(counts_pd1_aligned) != 36L ||
+  nrow(meta) != 36L ||
+  anyNA(meta$sample_name) ||
+  !identical(colnames(counts_pd1_aligned), meta$sample_name)
+) {
+  stop("Invalid alignment between PD1 counts and metadata.", call. = FALSE)
+}
+
+message(
+  "Aligned PD1 dataset: ",
+  ncol(counts_pd1_aligned),
+  " expression columns and ",
+  nrow(meta),
+  " clinical rows"
+)
+
 write.csv(
   meta,
   file.path(data_processed_dir, "metadata_GSE160638.csv"),
