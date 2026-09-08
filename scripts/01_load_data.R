@@ -328,36 +328,68 @@ pheno$char_all <- apply(
   collapse = " | "
 )
 
-pheno$response_raw <- NA_character_
+# ==========================================
+# Join GEO samples to the official endpoint
+# ==========================================
 
-pheno$response_raw[
-  grepl(
-    "responder|response[:= ]?R\\b|benefit[:= ]?yes|clinical benefit[:= ]?yes|CB[:= ]?yes|CR|PR",
-    pheno$char_all,
-    ignore.case = TRUE
+sample_name_clean <- sub(
+  ".*\\(([^()]*)\\)\\s*$",
+  "\\1",
+  trimws(pheno$title)
+)
+
+geo_meta <- transmute(
+  pheno,
+  sample_id = geo_accession,
+  patient_id = sample_name_clean,
+  title = trimws(title),
+  source_name = source_name_ch1,
+  characteristics = char_all
+) %>%
+  mutate(
+    patient_id = toupper(trimws(as.character(patient_id))),
+    patient_id = gsub("[^A-Z0-9]+", "_", patient_id),
+    patient_id = gsub("_+", "_", patient_id),
+    patient_id = gsub("^_+|_+$", "", patient_id)
   )
-] <- "Responder"
 
-pheno$response_raw[
-  grepl(
-    "non[- ]?responder|no response|benefit[:= ]?no|no clinical benefit|PD|SD",
-    pheno$char_all,
-    ignore.case = TRUE
+unmatched_pd1_ids <- setdiff(
+  clinical_pd1$patient_id,
+  geo_meta$patient_id
+)
+
+if (length(unmatched_pd1_ids) > 0L) {
+  stop(
+    "PD1 identifiers missing from GEO metadata: ",
+    paste(unmatched_pd1_ids, collapse = ", "),
+    call. = FALSE
   )
-] <- "NonResponder"
+}
 
-# Extreure identificador entre parèntesis final
-sample_name_clean <- sub("^.*\\(([^()]*)\\)\\s*$", "\\1", trimws(pheno$title))
-
-meta <- pheno |>
-  transmute(
-    sample_id = geo_accession,
-    sample_name = sample_name_clean,
-    title = trimws(title),
-    source_name = source_name_ch1,
-    characteristics = char_all,
-    response = response_raw
+meta <- geo_meta %>%
+  inner_join(
+    clinical_pd1 %>%
+      select(patient_id, response_recist, response),
+    by = "patient_id"
+  ) %>%
+  mutate(
+    sample_name = patient_id,
+    .after = sample_id
   )
+
+if (
+  nrow(meta) != 36L ||
+  anyDuplicated(meta$patient_id) > 0L ||
+  anyNA(meta$response)
+) {
+  stop("Invalid GEO–clinical endpoint join.", call. = FALSE)
+}
+
+message(
+  "Joined official endpoint to GEO metadata: ",
+  nrow(meta),
+  " PD1 samples"
+)
 
 write.csv(
   meta,
