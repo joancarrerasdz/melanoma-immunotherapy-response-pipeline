@@ -29,3 +29,26 @@ Only worksheet `S2A` will be used for the primary anti-PD-1 cohort. The download
 ## Reuse note
 
 The workbook is publicly accessible through AACR Figshare. No specific reuse licence is inferred in this repository; users must consult the source record and associated publication for applicable terms.
+
+## Week 1 analytical use
+
+For the Week 1 rebuild, worksheet `S2A` is parsed programmatically by `scripts/01_load_data.R`.
+
+The clinical source is used to:
+
+- define the primary anti–PD-1 population;
+- preserve the official `CR/PR/SD/PD` response endpoint;
+- derive the binary `Responder/NonResponder` endpoint;
+- normalize and validate PD1 patient identifiers;
+- align clinical records with GEO metadata and expression counts.
+
+The validated primary cohort contains 36 unique PD1 samples:
+
+- 22 Responders;
+- 14 NonResponders.
+
+Samples belonging to the TIL-ACT/TIL component of the source dataset (`TIL_*`) are not included in the primary anti–PD-1 cohort.
+
+Clinical missingness and category inconsistencies are preserved and documented rather than silently corrected during Week 1.
+
+For the complete analytical-data specification, see the repository-level `DATA.md`.
