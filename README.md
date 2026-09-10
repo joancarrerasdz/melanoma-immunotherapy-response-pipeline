@@ -1,5 +1,52 @@
 # TFM immunotherapy melanoma pipeline
 
+> [!WARNING]
+> **Results under methodological revalidation**
+>
+> The metrics, gene signatures, and biological interpretations currently included in this repository are historical outputs from the original master's thesis and are being methodologically revalidated. A clinical-endpoint labelling issue was identified in GSE160638; these outputs must not be interpreted as clinically validated evidence. The original academic state is preserved at tag `tfm-original`, and the reconstruction is being developed outside `main`.
+
+## Week 1 reproducible rebuild
+
+The current methodological rebuild is being developed outside `main`, starting from the frozen academic baseline preserved at tag `tfm-original`.
+
+Week 1 establishes the validated clinical and raw-expression foundation for the primary GSE160638 anti–PD-1 cohort before any predictive modelling is performed.
+
+The validated cohort contains:
+
+- 36 unique PD1 samples;
+- 22 Responders;
+- 14 NonResponders;
+- no TIL-ACT/TIL samples in the primary analytical cohort.
+
+The official treatment-response endpoint is reconstructed from supplementary Table S2A and explicitly mapped from `CR/PR/SD/PD` to the binary `Responder/NonResponder` outcome.
+
+### Reproduce Week 1
+
+From the repository root:
+
+```bash
+Rscript --vanilla scripts/run_week1.R
+```
+
+If the required Week 1 R packages are not installed:
+
+```bash
+Rscript --vanilla scripts/install_week1_dependencies.R
+```
+
+The Week 1 runner performs:
+
+1. clinical and expression-data reconstruction and alignment;
+2. automated integrity tests;
+3. initial descriptive quality control;
+4. validation of the expected Week 1 outputs.
+
+Detailed data provenance, cohort definitions, transformations and outputs are documented in [`DATA.md`](DATA.md).
+
+The authoritative clinical-source record is documented in [`data_raw/clinical/README.md`](data_raw/clinical/README.md).
+
+QC findings and explicitly documented anomalies are recorded in [`docs/day4_qc_anomalies.md`](docs/day4_qc_anomalies.md).
+
 This repository contains the R code, input public datasets, figures and result tables for the master's thesis project:
 
 **Validació i optimització d’una signatura molecular predictiva de resposta a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**
