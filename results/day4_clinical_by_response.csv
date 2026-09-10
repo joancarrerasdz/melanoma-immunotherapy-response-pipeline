@@ -1,0 +1,37 @@
+"variable","response","level","n","percent_within_response"
+"Gender","NonResponder","F",7,50
+"Gender","Responder","F",11,50
+"Gender","NonResponder","M",7,50
+"Gender","Responder","M",11,50
+"BRAF mutation","NonResponder","0",7,50
+"BRAF mutation","Responder","0",12,54.5454545454545
+"BRAF mutation","NonResponder","1",5,35.7142857142857
+"BRAF mutation","Responder","1",6,27.2727272727273
+"BRAF mutation","NonResponder","Missing",2,14.2857142857143
+"BRAF mutation","Responder","Missing",4,18.1818181818182
+"LDH high","NonResponder","0",6,42.8571428571429
+"LDH high","Responder","0",15,68.1818181818182
+"LDH high","NonResponder","1",6,42.8571428571429
+"LDH high","Responder","1",4,18.1818181818182
+"LDH high","NonResponder","Missing",2,14.2857142857143
+"LDH high","Responder","Missing",3,13.6363636363636
+"Biopsy type","NonResponder","Bone",1,7.14285714285714
+"Biopsy type","Responder","Bone",0,0
+"Biopsy type","NonResponder","Dermal metasteses",0,0
+"Biopsy type","Responder","Dermal metasteses",2,9.09090909090909
+"Biopsy type","NonResponder","LN",6,42.8571428571429
+"Biopsy type","Responder","LN",6,27.2727272727273
+"Biopsy type","NonResponder","Lung",0,0
+"Biopsy type","Responder","Lung",3,13.6363636363636
+"Biopsy type","NonResponder","Mucosal",1,7.14285714285714
+"Biopsy type","Responder","Mucosal",0,0
+"Biopsy type","NonResponder","Primary",1,7.14285714285714
+"Biopsy type","Responder","Primary",0,0
+"Biopsy type","NonResponder","Primary mucosal",2,14.2857142857143
+"Biopsy type","Responder","Primary mucosal",0,0
+"Biopsy type","NonResponder","SC",0,0
+"Biopsy type","Responder","SC",9,40.9090909090909
+"Biopsy type","NonResponder","visceral",1,7.14285714285714
+"Biopsy type","Responder","visceral",2,9.09090909090909
+"Biopsy type","NonResponder","Visceral",2,14.2857142857143
+"Biopsy type","Responder","Visceral",0,0
