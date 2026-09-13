@@ -1,0 +1,13 @@
+"metric","value"
+"input_genes",17002
+"input_samples",36
+"genes_after_filterByExpr",15097
+"genes_removed_by_filterByExpr",1905
+"responders",22
+"nonresponders",14
+"fdr_lt_0.05",2044
+"fdr_lt_0.10",3134
+"positive_logFC",6603
+"negative_logFC",8494
+"minimum_logFC",-7.29060638009707
+"maximum_logFC",5.18687819458377
