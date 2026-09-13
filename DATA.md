@@ -179,6 +179,156 @@ Differences in capitalization, punctuation and abbreviation in biopsy categories
 
 - `docs/day4_qc_anomalies.md`
 
+## Week 2 exploratory preprocessing and analysis
+
+Week 2 builds directly on the validated Week 1 analytical foundation.
+
+The Week 2 exploratory analyses use:
+
+- 36 validated PD1 samples;
+- 17,002 raw expression features;
+- 22 Responders;
+- 14 NonResponders;
+- the sample ordering established and validated during Week 1.
+
+No samples are added, removed or reordered during Week 2.
+
+### Exploratory gene filtering
+
+Expression filtering is performed with `edgeR::filterByExpr`.
+
+Starting from 17,002 genes:
+
+- 15,097 genes are retained;
+- 1,905 genes are removed.
+
+The filtering performed here is intended for exploratory analysis only.
+
+It must not be interpreted as a globally fitted feature-selection step for predictive modelling.
+
+### TMM normalization and exploratory logCPM
+
+The filtered exploratory expression data are normalized using edgeR TMM normalization.
+
+The resulting exploratory expression matrix contains:
+
+- 15,097 genes;
+- 36 samples;
+- no missing values;
+- only finite expression values.
+
+The exploratory logCPM matrix is stored as:
+
+`data_processed/GSE160638_logCPM_exploratory.rds`
+
+This matrix is intended for descriptive and exploratory analyses such as PCA and sample-correlation assessment.
+
+It is not a valid globally preprocessed input for predictive modelling.
+
+Predictive preprocessing must be fitted independently within the training partitions of the modelling workflow.
+
+### Exploratory PCA
+
+Principal component analysis is performed on the exploratory filtered, TMM-normalized logCPM matrix.
+
+The PCA includes all 36 validated PD1 samples.
+
+The first two principal components explain:
+
+- PC1: 17.24% of total variance;
+- PC2: 10.14% of total variance.
+
+The corresponding exploratory outputs are:
+
+- `results/week2_pca_scores_exploratory.csv`
+- `results/week2_pca_variance_exploratory.csv`
+- `figures/week2_pca_exploratory.png`
+
+### Sample-correlation analysis
+
+Pairwise Pearson correlations are calculated using the exploratory logCPM matrix.
+
+The resulting sample-correlation matrix has dimensions:
+
+`36 x 36`
+
+The corresponding outputs are:
+
+- `results/week2_sample_correlation_exploratory.csv`
+- `figures/week2_sample_correlation_exploratory.png`
+
+This analysis is descriptive and is used to inspect global sample-expression similarity.
+
+### Exploratory differential expression
+
+Differential-expression analysis is performed with edgeR using the validated Week 1 response endpoint.
+
+The model contrast is explicitly defined as:
+
+`Responder - NonResponder`
+
+Therefore:
+
+- positive logFC indicates higher expression in Responders;
+- negative logFC indicates higher expression in NonResponders.
+
+The analysis uses 15,097 genes after `filterByExpr`.
+
+The exploratory differential-expression results contain:
+
+- 2,044 genes with FDR < 0.05;
+- 3,134 genes with FDR < 0.10;
+- 6,603 genes with positive logFC;
+- 8,494 genes with negative logFC.
+
+The observed logFC range is approximately:
+
+`-7.290606 to 5.186878`
+
+The corresponding outputs are:
+
+- `results/week2_differential_expression_exploratory.csv`
+- `results/week2_differential_expression_summary.csv`
+
+These differential-expression results are exploratory only.
+
+They must not be used to globally preselect genes before predictive model validation.
+
+Any predictive feature-selection procedure must be fitted independently within training folds.
+
+### Week 2 audit outputs
+
+#### Preprocessing
+
+- `results/week2_gene_filtering_exploratory.csv`
+- `results/week2_tmm_normalization_exploratory.csv`
+- `results/week2_preprocessing_summary.csv`
+- `data_processed/GSE160638_logCPM_exploratory.rds`
+
+#### Exploratory analysis
+
+- `results/week2_pca_scores_exploratory.csv`
+- `results/week2_pca_variance_exploratory.csv`
+- `results/week2_sample_correlation_exploratory.csv`
+- `results/week2_exploratory_analysis_summary.csv`
+- `figures/week2_pca_exploratory.png`
+- `figures/week2_sample_correlation_exploratory.png`
+
+#### Exploratory differential expression
+
+- `results/week2_differential_expression_exploratory.csv`
+- `results/week2_differential_expression_summary.csv`
+
+### Week 2 methodological boundary
+
+Week 2 establishes an exploratory preprocessing and expression-analysis layer.
+
+The filtered/TMM/logCPM matrix, PCA results, sample correlations and differential-expression results are descriptive or exploratory outputs.
+
+They are not globally fitted preprocessing or feature-selection inputs for predictive modelling.
+
+To prevent information leakage, predictive preprocessing and feature selection must be estimated independently inside the training partitions of subsequent model-validation procedures.
+
 ## Reproduction
 
 The complete Week 1 rebuild is executed from the repository root with:

@@ -47,6 +47,72 @@ The authoritative clinical-source record is documented in [`data_raw/clinical/RE
 
 QC findings and explicitly documented anomalies are recorded in [`docs/day4_qc_anomalies.md`](docs/day4_qc_anomalies.md).
 
+## Week 2 reproducible preprocessing and exploratory analysis
+
+Week 2 builds on the validated Week 1 clinical and raw-expression foundation for the primary GSE160638 anti–PD-1 cohort.
+
+The validated input remains:
+
+- 36 PD1 samples;
+- 22 Responders;
+- 14 NonResponders;
+- 17,002 raw expression features;
+- identical clinical and expression sample order.
+
+Week 2 adds a reproducible exploratory preprocessing and analysis layer.
+
+The exploratory preprocessing performs:
+
+1. expression filtering with `edgeR::filterByExpr`;
+2. TMM library-size normalization;
+3. logCPM transformation for exploratory analysis.
+
+The exploratory filtering retains 15,097 genes and removes 1,905 genes.
+
+Exploratory analyses include:
+
+- PCA of the filtered/TMM-normalized logCPM matrix;
+- sample-to-sample expression correlation;
+- exploratory differential-expression analysis between Responders and NonResponders.
+
+For the exploratory PCA:
+
+- PC1 explains 17.24% of the variance;
+- PC2 explains 10.14% of the variance.
+
+The exploratory differential-expression contrast is:
+
+`Responder - NonResponder`
+
+and identifies:
+
+- 2,044 genes with FDR < 0.05;
+- 3,134 genes with FDR < 0.10.
+
+### Reproduce Week 2
+
+From the repository root:
+
+```bash
+Rscript --vanilla scripts/run_week2.R
+```
+
+The Week 2 runner executes:
+
+1. exploratory preprocessing;
+2. exploratory PCA and sample-correlation analysis;
+3. exploratory differential-expression analysis;
+4. validation of the expected Week 2 outputs.
+
+### Methodological boundary
+
+The Week 2 filtered/TMM/logCPM matrix and differential-expression results are **exploratory only**.
+
+They must not be used as globally preprocessed or globally preselected inputs for predictive modelling.
+
+Predictive preprocessing and feature selection must be fitted independently inside the training partitions of the modelling workflow.
+
+
 This repository contains the R code, input public datasets, figures and result tables for the master's thesis project:
 
 **Validació i optimització d’una signatura molecular predictiva de resposta a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**
