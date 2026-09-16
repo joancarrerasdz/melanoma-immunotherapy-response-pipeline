@@ -329,12 +329,126 @@ They are not globally fitted preprocessing or feature-selection inputs for predi
 
 To prevent information leakage, predictive preprocessing and feature selection must be estimated independently inside the training partitions of subsequent model-validation procedures.
 
+
+## Week 3 strict nested-CV outputs
+
+Week 3 uses the validated Week 1 clinical and raw-count foundation directly.
+
+### Validated modelling inputs
+
+- `data_processed/GSE160638_raw_counts_PD1_aligned.rds`
+- `data_processed/GSE160638_TableS2A_PD1_clinical.csv`
+
+Validated dimensions:
+
+- 17,002 genes;
+- 36 samples;
+- 22 Responders;
+- 14 NonResponders.
+
+The Week 2 exploratory filtered/TMM/logCPM matrix is **not** used as a
+predictive modelling input.
+
+Predictive preprocessing and feature selection are estimated independently
+inside training partitions.
+
+### Strict nested cross-validation outputs
+
+- `results/week3_inner_cv_metrics_strict.csv`
+- `results/week3_inner_tuning_summary_strict.csv`
+- `results/week3_outer_predictions_strict.csv`
+- `results/week3_outer_fold_metrics_strict.csv`
+- `results/week3_outer_selected_genes_strict.csv`
+- `results/week3_gene_selection_frequency_strict.csv`
+- `results/week3_nested_cv_summary_strict.csv`
+- `figures/week3_nested_cv_roc_strict.png`
+
+The nested-CV design uses 5 outer folds and 3 inner folds.
+
+Each sample receives exactly one outer out-of-fold prediction.
+
+Validation performance is calculated exclusively from the pooled outer
+out-of-fold predictions.
+
+Validated performance:
+
+- Accuracy: 0.8333;
+- Sensitivity: 0.9091;
+- Specificity: 0.7143;
+- Balanced Accuracy: 0.8117;
+- AUC: 0.8896.
+
+### Strict gene-stability outputs
+
+- `results/week3_gene_stability_tiers_strict.csv`
+- `results/week3_consensus_repeated_2of5_strict.csv`
+- `results/week3_consensus_majority_3of5_strict.csv`
+- `results/week3_consensus_high_4of5_strict.csv`
+- `results/week3_consensus_core_5of5_strict.csv`
+- `figures/week3_gene_selection_stability_strict.png`
+
+Observed stability:
+
+- at least 1/5 outer folds: 312 genes;
+- at least 2/5 outer folds: 100 genes;
+- at least 3/5 outer folds: 51 genes;
+- at least 4/5 outer folds: 25 genes;
+- 5/5 outer folds: 12 genes.
+
+The 12 genes selected in all five outer folds are core consensus candidates,
+not an independently validated final signature.
+
+### Historical-versus-strict audit outputs
+
+- `results/week3_historical_vs_strict_5of5.csv`
+- `results/week3_historical_vs_strict_5of5_summary.csv`
+- `results/week3_historical_13_genes_in_strict_pipeline.csv`
+- `results/week3_historical_13_genes_in_strict_pipeline_summary.csv`
+- `docs/week3_historical_vs_strict_stability_audit.md`
+
+Historical audit:
+
+- historical 5/5 genes: 13;
+- strict 5/5 genes: 12;
+- shared 5/5 genes: 0;
+- historical genes present in validated input: 13/13;
+- historical genes selected in at least one strict outer fold: 0/13.
+
+The zero overlap documents failure to reproduce the historical stability set
+under the strict nested-CV procedure. It does not demonstrate biological
+irrelevance of the historical genes.
+
+### Week 3 methodological boundary
+
+The strict nested-CV metrics are validation estimates.
+
+The consensus-gene outputs are post-validation stability analyses.
+
+Any model subsequently fitted to a consensus signature using the complete
+36-sample cohort is exploratory and must not be reported as independent
+validation on those same samples.
+
+
 ## Reproduction
 
-The complete Week 1 rebuild is executed from the repository root with:
+The reproducible rebuild can be executed by week from the repository root.
+
+Week 1:
 
 ```bash
 Rscript --vanilla scripts/run_week1.R
+```
+
+Week 2:
+
+```bash
+Rscript --vanilla scripts/run_week2.R
+```
+
+Week 3:
+
+```bash
+Rscript --vanilla scripts/run_week3.R
 ```
 
 Required Week 1 dependencies can be installed with:

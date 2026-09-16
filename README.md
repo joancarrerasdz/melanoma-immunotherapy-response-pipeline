@@ -113,6 +113,114 @@ They must not be used as globally preprocessed or globally preselected inputs fo
 Predictive preprocessing and feature selection must be fitted independently inside the training partitions of the modelling workflow.
 
 
+
+## Week 3 — Strict nested cross-validation and gene-stability rebuild
+
+Week 3 reconstructs the predictive modelling layer using a strict nested
+cross-validation architecture designed to prevent information leakage.
+
+The validated Week 1 cohort is preserved:
+
+- 36 anti-PD-1 samples;
+- 17,002 input genes;
+- 22 Responders;
+- 14 NonResponders.
+
+### Strict nested-CV design
+
+The rebuilt validation procedure uses:
+
+- 5 outer folds for unbiased out-of-fold evaluation;
+- 3 inner folds for hyperparameter tuning;
+- 100 genes selected independently inside each training partition;
+- training-only expression filtering and feature selection;
+- training-only hyperparameter tuning;
+- outer-test samples excluded from preprocessing, feature selection,
+  tuning and model fitting.
+
+Each sample receives exactly one outer out-of-fold prediction.
+
+Global validation performance is calculated exclusively from the pooled
+outer out-of-fold predictions.
+
+### Strict nested-CV performance
+
+The validated pooled outer-fold performance is:
+
+- Accuracy: 0.8333;
+- Sensitivity: 0.9091;
+- Specificity: 0.7143;
+- Balanced Accuracy: 0.8117;
+- AUC: 0.8896.
+
+These values represent the validation performance of the strict nested-CV
+procedure on the 36-sample GSE160638 cohort.
+
+### Gene-selection stability
+
+Feature-selection stability across the five outer training partitions is:
+
+- selected in at least 1/5 folds: 312 genes;
+- selected in at least 2/5 folds: 100 genes;
+- selected in at least 3/5 folds: 51 genes;
+- selected in at least 4/5 folds: 25 genes;
+- selected in 5/5 folds: 12 genes.
+
+The 12 genes selected in all five outer folds are treated as
+**core consensus candidates**.
+
+They do not constitute an independently validated final molecular signature.
+
+### Historical-versus-strict audit
+
+The historical workflow contained 13 genes reported as stable in 5/5 folds.
+
+The reproducibility audit shows:
+
+- historical 5/5 genes: 13;
+- strict 5/5 genes: 12;
+- shared 5/5 genes: 0;
+- historical genes present in the validated 17,002-gene input: 13/13;
+- historical genes selected in at least one strict outer fold: 0/13.
+
+Therefore, the historical stable set is not reproduced by the strict
+nested-CV selection procedure.
+
+This result does not demonstrate biological irrelevance of the historical
+genes. It documents a lack of reproducibility of their previously reported
+selection stability under the stricter modelling architecture.
+
+### Reproduce Week 3
+
+From the repository root:
+
+```bash
+Rscript --vanilla scripts/run_week3.R
+```
+
+The Week 3 runner executes:
+
+1. strict nested cross-validation;
+2. strict gene-selection stability analysis;
+3. historical-versus-strict stability audit;
+4. validation of the expected Week 3 outputs and metrics.
+
+### Week 3 methodological boundary
+
+Validation performance and post-validation consensus-gene analyses are kept
+strictly separate.
+
+Only pooled outer out-of-fold predictions are used to calculate validation
+performance.
+
+Consensus sets derived after nested cross-validation are stability-derived
+candidate signatures and must not be reported as independently validated
+final signatures.
+
+Historical full-dataset Random Forest importance analyses are exploratory and
+are not used to define the strict consensus candidates.
+
+
 This repository contains the R code, input public datasets, figures and result tables for the master's thesis project:
 
 **Validació i optimització d’una signatura molecular predictiva de resposta a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**

@@ -1,0 +1,11 @@
+"metric","value"
+"samples",36
+"input_genes",17002
+"outer_folds",5
+"inner_folds",3
+"genes_per_model",100
+"accuracy",0.833333333333333
+"sensitivity",0.909090909090909
+"specificity",0.714285714285714
+"balanced_accuracy",0.811688311688312
+"auc",0.88961038961039
