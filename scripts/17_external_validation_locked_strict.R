@@ -579,8 +579,11 @@ freeze_commit <- tryCatch(
       system2(
         "git",
         c(
-          "rev-parse",
-          "HEAD"
+          "log",
+          "-1",
+          "--format=%H",
+          "--",
+          "results/week4_external_predictions_blind_strict.csv"
         ),
         stdout = TRUE
       )
