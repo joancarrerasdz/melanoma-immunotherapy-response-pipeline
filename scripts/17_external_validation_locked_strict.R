@@ -611,7 +611,7 @@ cat(
 )
 
 cat(
-  "Evaluation starting from HEAD:",
+  "Frozen blind-prediction commit:",
   freeze_commit,
   "\n"
 )
@@ -1058,7 +1058,7 @@ dev.off()
 evaluation_audit <- data.frame(
   item = c(
     "gate4_freeze_md5_verified",
-    "evaluation_start_commit",
+    "blind_prediction_freeze_commit",
     "blind_predictions",
     "external_samples_joined",
     "genes",

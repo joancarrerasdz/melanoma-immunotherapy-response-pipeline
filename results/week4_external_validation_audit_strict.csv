@@ -1,6 +1,6 @@
 "item","value"
 "gate4_freeze_md5_verified","TRUE"
-"evaluation_start_commit","3e427be1b885b9514cb8acc857e3eb3ca90e4ceb"
+"blind_prediction_freeze_commit","3e427be1b885b9514cb8acc857e3eb3ca90e4ceb"
 "blind_predictions","76"
 "external_samples_joined","76"
 "genes","12"
