@@ -1,0 +1,3 @@
+"dataset","samples","genes","representation","probability_min","probability_max","predicted_NonResponder","predicted_Responder","external_labels_read","external_performance_calculated"
+"GSE78220",27,12,"samplewise_rank",0.06,0.946,9,18,FALSE,FALSE
+"GSE91061",49,12,"samplewise_rank",0.188,0.998,8,41,FALSE,FALSE

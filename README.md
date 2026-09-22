@@ -221,6 +221,75 @@ Historical full-dataset Random Forest importance analyses are exploratory and
 are not used to define the strict consensus candidates.
 
 
+## Week 4 — Locked external validation
+
+Week 4 evaluates the frozen Week 3 predictive candidates on two independent
+melanoma anti-PD-1 cohorts without adapting the model to their outcomes.
+
+External cohorts:
+
+- GSE91061: 49 pre-treatment samples;
+- GSE78220: 27 pre-treatment samples.
+
+The frozen deployment specification uses:
+
+- the 12 Week 3 genes selected in all 5/5 outer folds;
+- `samplewise_rank` expression representation;
+- Random Forest with `mtry = 1`;
+- 500 trees;
+- classification threshold = 0.48.
+
+The deployment model and all 76 external predictions were frozen before
+external response labels were opened.
+
+The blind-prediction freeze is preserved at commit
+`3e427be1b885b9514cb8acc857e3eb3ca90e4ceb`.
+
+### Locked external-validation performance
+
+Dataset-specific results are the primary external-validation results:
+
+| Dataset | n | AUC | Accuracy | Sensitivity | Specificity | Balanced Accuracy |
+|---|---:|---:|---:|---:|---:|---:|
+| GSE91061 | 49 | 0.6641 | 0.3265 | 0.9000 | 0.1795 | 0.5397 |
+| GSE78220 | 27 | 0.6444 | 0.6667 | 0.8000 | 0.5000 | 0.6500 |
+
+The pooled 76-sample result is a secondary summary:
+
+- AUC: 0.5718;
+- Accuracy: 0.4474;
+- Sensitivity: 0.8400;
+- Specificity: 0.2549;
+- Balanced Accuracy: 0.5475.
+
+No genes, expression representation, hyperparameters or classification
+threshold were changed after external labels were opened.
+
+### Reproduce Week 4
+
+From the repository root:
+
+`Rscript --vanilla scripts/run_week4.R`
+
+A successful reproduction terminates with:
+
+`WEEK 4 REPRODUCTION: PASS`
+
+Detailed methodology and interpretation are documented in
+`docs/week4_locked_external_validation.md`.
+
+### Week 4 methodological boundary
+
+The Week 3 nested-CV metrics estimate internal predictive performance.
+
+The Week 4 cohort-specific results assess external transportability.
+
+The pooled external result is secondary because the cohorts differ in
+response prevalence and composition.
+
+The frozen 12-gene model is not described as a clinically validated molecular
+signature.
+
 This repository contains the R code, input public datasets, figures and result tables for the master's thesis project:
 
 **Validació i optimització d’una signatura molecular predictiva de resposta a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**
@@ -280,9 +349,9 @@ source("scripts/12_external_validation_final_100.R")
 source("scripts/13_gene_stability_across_datasets.R")
 ```
 
-## Main final results
+## Historical thesis results — reference only
 
-### Internal validation, final 100-gene signature
+### Historical internal validation, final 100-gene signature
 
 From `results/rf_cv_metrics_summary_final_100_no_leakage.csv`:
 
@@ -310,7 +379,7 @@ From `results_reference/signature_size_comparison_metrics.csv` / final compariso
 | 250 | 0.831456 | 0.780822 | 0.780405 |
 | 500 | 0.827703 | 0.780822 | 0.780030 |
 
-### External validation, final 100-gene model
+### Historical external validation, final 100-gene model
 
 From `results/external_validation_metrics_by_dataset_final_100.csv`:
 
@@ -319,7 +388,7 @@ From `results/external_validation_metrics_by_dataset_final_100.csv`:
 | GSE91061 | 0.670513 | 0.612245 | 0.600000 | 0.615385 | 0.607692 |
 | GSE78220 | 0.611111 | 0.444444 | 0.000000 | 1.000000 | 0.500000 |
 
-### Gene-stability distribution, final 100-gene signature
+### Historical gene-stability distribution, final 100-gene signature
 
 From `results/gene_stability_summary_final_100.csv`:
 

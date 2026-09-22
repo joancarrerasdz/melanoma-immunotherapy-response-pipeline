@@ -1,0 +1,6 @@
+"component","version"
+"R","4.5.1"
+"edgeR","4.6.3"
+"caret","7.0.1"
+"randomForest","4.7.1.2"
+"pROC","1.19.0.1"
