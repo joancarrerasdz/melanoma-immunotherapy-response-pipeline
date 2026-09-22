@@ -429,6 +429,31 @@ Any model subsequently fitted to a consensus signature using the complete
 validation on those same samples.
 
 
+## Week 4 locked external-validation data
+
+Week 4 evaluates the frozen Week 3 deployment procedure on two independent melanoma anti-PD-1 cohorts: GSE91061 (49 pre-treatment samples) and GSE78220 (27 pre-treatment samples), for 76 external samples in total.
+
+The deployment gene space contains the 12 genes selected in all five strict Week 3 outer folds. The frozen representation is `samplewise_rank`, calculated independently within each sample across the 12-gene core.
+
+The frozen Random Forest specification uses `mtry = 1`, 500 trees and classification threshold 0.48. The model and all blind external predictions were frozen before external response labels were opened. The blind-prediction freeze commit is `3e427be1b885b9514cb8acc857e3eb3ca90e4ceb`.
+
+### Locked external-validation results
+
+Primary cohort-specific results:
+
+- GSE91061: AUC 0.6641; accuracy 0.3265; sensitivity 0.9000; specificity 0.1795; balanced accuracy 0.5397.
+- GSE78220: AUC 0.6444; accuracy 0.6667; sensitivity 0.8000; specificity 0.5000; balanced accuracy 0.6500.
+
+The pooled 76-sample result is secondary: AUC 0.5718 and balanced accuracy 0.5475.
+
+### Week 4 methodological boundary
+
+External labels are consulted only after model specification and blind predictions have been frozen. No post-unblinding gene reselection, representation change, model refitting, hyperparameter change or threshold optimization is permitted.
+
+The Week 3 AUC of 0.8896 remains an internal nested-cross-validation estimate and must not be reported as external-validation performance. The 12-gene deployment model must not be described as a clinically validated molecular signature.
+
+Detailed Week 4 methodology is documented in `docs/week4_locked_external_validation.md`.
+
 ## Reproduction
 
 The reproducible rebuild can be executed by week from the repository root.
@@ -449,6 +474,12 @@ Week 3:
 
 ```bash
 Rscript --vanilla scripts/run_week3.R
+```
+
+Week 4:
+
+```bash
+Rscript --vanilla scripts/run_week4.R
 ```
 
 Required Week 1 dependencies can be installed with:
