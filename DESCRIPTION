@@ -1,0 +1,15 @@
+Package: melanoma.immunotherapy.response.pipeline
+Type: Project
+Title: Melanoma Immunotherapy Response Pipeline
+Version: 0.0.0.9000
+Description: Reproducible dependency contract for the strict Week 3 nested
+    cross-validation and Week 4 locked external-validation workflow.
+Encoding: UTF-8
+Imports:
+    AnnotationDbi,
+    caret,
+    edgeR,
+    org.Hs.eg.db,
+    pROC,
+    randomForest,
+    readxl
