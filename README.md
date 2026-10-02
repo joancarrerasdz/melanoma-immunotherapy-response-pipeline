@@ -131,6 +131,12 @@ These values are **internal nested-cross-validation estimates**.
 
 They are not external-validation performance estimates.
 
+![Week 3 strict nested cross-validation ROC](figures/week3_nested_cv_roc_strict.png)
+
+*Figure 1. Strict Week 3 nested-cross-validation ROC based on pooled outer
+out-of-fold predictions. The reported AUC is an internal validation estimate,
+not external-validation performance.*
+
 ### Feature-selection stability
 
 | Selection frequency | Genes |
@@ -140,6 +146,12 @@ They are not external-validation performance estimates.
 | ≥3/5 outer folds | 51 |
 | ≥4/5 outer folds | 25 |
 | 5/5 outer folds | 12 |
+
+![Week 3 strict feature-selection stability](figures/week3_gene_selection_stability_strict.png)
+
+*Figure 2. Feature-selection stability across the five strict outer
+cross-validation folds. Twelve genes were selected in all five outer
+training partitions.*
 
 The 12 genes selected in all five outer folds are treated as
 **stability-derived consensus candidates**.
@@ -179,6 +191,12 @@ Blind-prediction freeze commit:
 | GSE78220 | 27 | 0.6444 | 0.6667 | 0.8000 | 0.5000 | 0.6500 |
 
 Dataset-specific results are the primary external-validation assessment.
+
+![Week 4 locked external validation ROC](figures/week4_external_validation_roc_strict.png)
+
+*Figure 3. Locked external-validation ROC results for the two independent
+external cohorts. Model specification, representation, hyperparameters and
+classification threshold were frozen before external outcome unblinding.*
 
 ### Secondary pooled summary
 
@@ -371,6 +389,7 @@ The completed remediation is preserved at tag:
 ## Key documentation
 
 - [`DATA.md`](DATA.md) — data provenance and endpoint reconstruction
+- [`docs/public_artifact_manifest.md`](docs/public_artifact_manifest.md) — canonical, supporting, exploratory and historical artifact classification
 - [`docs/preprocessing_contract.md`](docs/preprocessing_contract.md) — preprocessing boundaries
 - [`docs/reproducible_environment.md`](docs/reproducible_environment.md) — reproducible environment
 - [`docs/confounding_assessment.md`](docs/confounding_assessment.md) — confounding and cohort heterogeneity
