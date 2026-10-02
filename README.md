@@ -1,439 +1,469 @@
-# TFM immunotherapy melanoma pipeline
+# Melanoma immunotherapy response — reproducible bioinformatics pipeline
 
-> [!WARNING]
-> **Results under methodological revalidation**
->
-> The metrics, gene signatures, and biological interpretations currently included in this repository are historical outputs from the original master's thesis and are being methodologically revalidated. A clinical-endpoint labelling issue was identified in GSE160638; these outputs must not be interpreted as clinically validated evidence. The original academic state is preserved at tag `tfm-original`, and the reconstruction is being developed outside `main`.
+A reproducible transcriptomic machine-learning workflow for evaluating
+anti-PD-1 treatment response in melanoma.
 
-## Week 1 reproducible rebuild
+This repository reconstructs an original MSc thesis analysis under a stricter
+methodological framework focused on:
 
-The current methodological rebuild is being developed outside `main`, starting from the frozen academic baseline preserved at tag `tfm-original`.
+- traceable clinical endpoint reconstruction;
+- leakage-aware preprocessing;
+- nested cross-validation;
+- feature-selection stability;
+- frozen model specification;
+- blind external prediction;
+- locked external validation;
+- reproducible computing environments;
+- explicit methodological QA gates.
 
-Week 1 establishes the validated clinical and raw-expression foundation for the primary GSE160638 anti–PD-1 cohort before any predictive modelling is performed.
+The original academic repository state is preserved at tag `tfm-original`.
 
-The validated cohort contains:
+The strict Week 1–4 methodological rebuild and the subsequent Week 3–4 QA
+remediation are complete and merged into `main`.
 
-- 36 unique PD1 samples;
+---
+
+## Project overview
+
+### Development cohort
+
+**GSE160638**
+
+- 36 anti-PD-1 melanoma samples;
 - 22 Responders;
 - 14 NonResponders;
-- no TIL-ACT/TIL samples in the primary analytical cohort.
+- 17,002 validated expression features.
 
-The official treatment-response endpoint is reconstructed from supplementary Table S2A and explicitly mapped from `CR/PR/SD/PD` to the binary `Responder/NonResponder` outcome.
+The clinical treatment-response endpoint is reconstructed from the official
+supplementary clinical Table S2A.
 
-### Reproduce Week 1
+Response mapping:
 
-From the repository root:
+- `CR` / `PR` → `Responder`
+- `SD` / `PD` → `NonResponder`
 
-```bash
-Rscript --vanilla scripts/run_week1.R
-```
+Full data provenance is documented in [`DATA.md`](DATA.md).
 
-If the required Week 1 R packages are not installed:
+### External cohorts
 
-```bash
-Rscript --vanilla scripts/install_week1_dependencies.R
-```
+The frozen Week 4 procedure is evaluated independently on:
 
-The Week 1 runner performs:
+- **GSE91061:** 49 pre-treatment samples;
+- **GSE78220:** 27 pre-treatment samples.
 
-1. clinical and expression-data reconstruction and alignment;
-2. automated integrity tests;
-3. initial descriptive quality control;
-4. validation of the expected Week 1 outputs.
+External response labels are not used to redefine the gene set, expression
+representation, model, hyperparameters or classification threshold.
 
-Detailed data provenance, cohort definitions, transformations and outputs are documented in [`DATA.md`](DATA.md).
+---
 
-The authoritative clinical-source record is documented in [`data_raw/clinical/README.md`](data_raw/clinical/README.md).
+## Methodological workflow
 
-QC findings and explicitly documented anomalies are recorded in [`docs/day4_qc_anomalies.md`](docs/day4_qc_anomalies.md).
+~~~text
+Validated raw counts + clinical endpoint
+                |
+                v
+Week 2 exploratory preprocessing
+(descriptive / exploratory only)
+                |
+                v
+Week 3 strict nested cross-validation
+                |
+                +--> predictive preprocessing from training data
+                |
+                +--> feature selection inside resampling
+                |
+                +--> hyperparameter tuning inside training data
+                |
+                v
+Outer out-of-fold validation
+                |
+                v
+Post-validation gene-stability analysis
+                |
+                v
+Frozen 12-gene consensus candidate set
+                |
+                v
+Week 4 label-free representation audit
+                |
+                v
+Frozen samplewise_rank representation
+                |
+                v
+Frozen model + blind external predictions
+                |
+                v
+External outcome unblinding
+                |
+                v
+Locked external evaluation
+~~~
 
-## Week 2 reproducible preprocessing and exploratory analysis
+The formal preprocessing boundary is documented in
+[`docs/preprocessing_contract.md`](docs/preprocessing_contract.md).
 
-Week 2 builds on the validated Week 1 clinical and raw-expression foundation for the primary GSE160638 anti–PD-1 cohort.
+---
 
-The validated input remains:
+## Week 3 — strict internal validation
 
-- 36 PD1 samples;
-- 22 Responders;
-- 14 NonResponders;
-- 17,002 raw expression features;
-- identical clinical and expression sample order.
+Week 3 uses nested cross-validation to separate model development from
+outer-fold performance estimation.
 
-Week 2 adds a reproducible exploratory preprocessing and analysis layer.
+The strict workflow uses:
 
-The exploratory preprocessing performs:
+- 5 outer folds;
+- 3 inner folds;
+- feature selection restricted to training partitions;
+- hyperparameter tuning restricted to training partitions;
+- one outer out-of-fold prediction per sample.
 
-1. expression filtering with `edgeR::filterByExpr`;
-2. TMM library-size normalization;
-3. logCPM transformation for exploratory analysis.
+### Internal nested-CV performance
 
-The exploratory filtering retains 15,097 genes and removes 1,905 genes.
+| Metric | Value |
+|---|---:|
+| Accuracy | 0.8333 |
+| Sensitivity | 0.9091 |
+| Specificity | 0.7143 |
+| Balanced Accuracy | 0.8117 |
+| AUC | 0.8896 |
 
-Exploratory analyses include:
+These values are **internal nested-cross-validation estimates**.
 
-- PCA of the filtered/TMM-normalized logCPM matrix;
-- sample-to-sample expression correlation;
-- exploratory differential-expression analysis between Responders and NonResponders.
+They are not external-validation performance estimates.
 
-For the exploratory PCA:
+![Week 3 strict nested cross-validation ROC](figures/week3_nested_cv_roc_strict.png)
 
-- PC1 explains 17.24% of the variance;
-- PC2 explains 10.14% of the variance.
+*Figure 1. Strict Week 3 nested-cross-validation ROC based on pooled outer
+out-of-fold predictions. The reported AUC is an internal validation estimate,
+not external-validation performance.*
 
-The exploratory differential-expression contrast is:
+### Feature-selection stability
 
-`Responder - NonResponder`
+| Selection frequency | Genes |
+|---|---:|
+| ≥1/5 outer folds | 312 |
+| ≥2/5 outer folds | 100 |
+| ≥3/5 outer folds | 51 |
+| ≥4/5 outer folds | 25 |
+| 5/5 outer folds | 12 |
 
-and identifies:
+![Week 3 strict feature-selection stability](figures/week3_gene_selection_stability_strict.png)
 
-- 2,044 genes with FDR < 0.05;
-- 3,134 genes with FDR < 0.10.
-
-### Reproduce Week 2
-
-From the repository root:
-
-```bash
-Rscript --vanilla scripts/run_week2.R
-```
-
-The Week 2 runner executes:
-
-1. exploratory preprocessing;
-2. exploratory PCA and sample-correlation analysis;
-3. exploratory differential-expression analysis;
-4. validation of the expected Week 2 outputs.
-
-### Methodological boundary
-
-The Week 2 filtered/TMM/logCPM matrix and differential-expression results are **exploratory only**.
-
-They must not be used as globally preprocessed or globally preselected inputs for predictive modelling.
-
-Predictive preprocessing and feature selection must be fitted independently inside the training partitions of the modelling workflow.
-
-
-
-## Week 3 — Strict nested cross-validation and gene-stability rebuild
-
-Week 3 reconstructs the predictive modelling layer using a strict nested
-cross-validation architecture designed to prevent information leakage.
-
-The validated Week 1 cohort is preserved:
-
-- 36 anti-PD-1 samples;
-- 17,002 input genes;
-- 22 Responders;
-- 14 NonResponders.
-
-### Strict nested-CV design
-
-The rebuilt validation procedure uses:
-
-- 5 outer folds for unbiased out-of-fold evaluation;
-- 3 inner folds for hyperparameter tuning;
-- 100 genes selected independently inside each training partition;
-- training-only expression filtering and feature selection;
-- training-only hyperparameter tuning;
-- outer-test samples excluded from preprocessing, feature selection,
-  tuning and model fitting.
-
-Each sample receives exactly one outer out-of-fold prediction.
-
-Global validation performance is calculated exclusively from the pooled
-outer out-of-fold predictions.
-
-### Strict nested-CV performance
-
-The validated pooled outer-fold performance is:
-
-- Accuracy: 0.8333;
-- Sensitivity: 0.9091;
-- Specificity: 0.7143;
-- Balanced Accuracy: 0.8117;
-- AUC: 0.8896.
-
-These values represent the validation performance of the strict nested-CV
-procedure on the 36-sample GSE160638 cohort.
-
-### Gene-selection stability
-
-Feature-selection stability across the five outer training partitions is:
-
-- selected in at least 1/5 folds: 312 genes;
-- selected in at least 2/5 folds: 100 genes;
-- selected in at least 3/5 folds: 51 genes;
-- selected in at least 4/5 folds: 25 genes;
-- selected in 5/5 folds: 12 genes.
+*Figure 2. Feature-selection stability across the five strict outer
+cross-validation folds. Twelve genes were selected in all five outer
+training partitions.*
 
 The 12 genes selected in all five outer folds are treated as
-**core consensus candidates**.
+**stability-derived consensus candidates**.
 
-They do not constitute an independently validated final molecular signature.
+They are not described as a clinically validated molecular signature.
 
-### Historical-versus-strict audit
+See
+[`docs/week3_historical_vs_strict_stability_audit.md`](docs/week3_historical_vs_strict_stability_audit.md).
 
-The historical workflow contained 13 genes reported as stable in 5/5 folds.
+---
 
-The reproducibility audit shows:
+## Week 4 — locked external validation
 
-- historical 5/5 genes: 13;
-- strict 5/5 genes: 12;
-- shared 5/5 genes: 0;
-- historical genes present in the validated 17,002-gene input: 13/13;
-- historical genes selected in at least one strict outer fold: 0/13.
+Week 4 evaluates a frozen deployment procedure on two independent cohorts.
 
-Therefore, the historical stable set is not reproduced by the strict
-nested-CV selection procedure.
+The locked specification uses:
 
-This result does not demonstrate biological irrelevance of the historical
-genes. It documents a lack of reproducibility of their previously reported
-selection stability under the stricter modelling architecture.
-
-### Reproduce Week 3
-
-From the repository root:
-
-```bash
-Rscript --vanilla scripts/run_week3.R
-```
-
-The Week 3 runner executes:
-
-1. strict nested cross-validation;
-2. strict gene-selection stability analysis;
-3. historical-versus-strict stability audit;
-4. validation of the expected Week 3 outputs and metrics.
-
-### Week 3 methodological boundary
-
-Validation performance and post-validation consensus-gene analyses are kept
-strictly separate.
-
-Only pooled outer out-of-fold predictions are used to calculate validation
-performance.
-
-Consensus sets derived after nested cross-validation are stability-derived
-candidate signatures and must not be reported as independently validated
-final signatures.
-
-Historical full-dataset Random Forest importance analyses are exploratory and
-are not used to define the strict consensus candidates.
-
-
-## Week 4 — Locked external validation
-
-Week 4 evaluates the frozen Week 3 predictive candidates on two independent
-melanoma anti-PD-1 cohorts without adapting the model to their outcomes.
-
-External cohorts:
-
-- GSE91061: 49 pre-treatment samples;
-- GSE78220: 27 pre-treatment samples.
-
-The frozen deployment specification uses:
-
-- the 12 Week 3 genes selected in all 5/5 outer folds;
-- `samplewise_rank` expression representation;
-- Random Forest with `mtry = 1`;
+- the 12 Week 3 consensus candidates;
+- `samplewise_rank` representation;
+- Random Forest;
+- `mtry = 1`;
 - 500 trees;
-- classification threshold = 0.48.
+- classification threshold `0.48`.
 
-The deployment model and all 76 external predictions were frozen before
+The deployment model and all 76 blind external predictions were frozen before
 external response labels were opened.
 
-The blind-prediction freeze is preserved at commit
-`3e427be1b885b9514cb8acc857e3eb3ca90e4ceb`.
+Blind-prediction freeze commit:
 
-### Locked external-validation performance
+`3e427be1b885b9514cb8acc857e3eb3ca90e4ceb`
 
-Dataset-specific results are the primary external-validation results:
+### Primary cohort-specific results
 
 | Dataset | n | AUC | Accuracy | Sensitivity | Specificity | Balanced Accuracy |
 |---|---:|---:|---:|---:|---:|---:|
 | GSE91061 | 49 | 0.6641 | 0.3265 | 0.9000 | 0.1795 | 0.5397 |
 | GSE78220 | 27 | 0.6444 | 0.6667 | 0.8000 | 0.5000 | 0.6500 |
 
-The pooled 76-sample result is a secondary summary:
+Dataset-specific results are the primary external-validation assessment.
 
-- AUC: 0.5718;
-- Accuracy: 0.4474;
-- Sensitivity: 0.8400;
-- Specificity: 0.2549;
-- Balanced Accuracy: 0.5475.
+![Week 4 locked external validation ROC](figures/week4_external_validation_roc_strict.png)
 
-No genes, expression representation, hyperparameters or classification
-threshold were changed after external labels were opened.
+*Figure 3. Locked external-validation ROC results for the two independent
+external cohorts. Model specification, representation, hyperparameters and
+classification threshold were frozen before external outcome unblinding.*
 
-### Reproduce Week 4
-
-From the repository root:
-
-`Rscript --vanilla scripts/run_week4.R`
-
-A successful reproduction terminates with:
-
-`WEEK 4 REPRODUCTION: PASS`
-
-Detailed methodology and interpretation are documented in
-`docs/week4_locked_external_validation.md`.
-
-### Week 4 methodological boundary
-
-The Week 3 nested-CV metrics estimate internal predictive performance.
-
-The Week 4 cohort-specific results assess external transportability.
-
-The pooled external result is secondary because the cohorts differ in
-response prevalence and composition.
-
-The frozen 12-gene model is not described as a clinically validated molecular
-signature.
-
-This repository contains the R code, input public datasets, figures and result tables for the master's thesis project:
-
-**Validació i optimització d’una signatura molecular predictiva de resposta a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**
-
-Author: Joan Carreras Díaz  
-Programme: Màster Universitari en Bioinformàtica i Bioestadística  
-Area: Desenvolupament de Programari i Aplicacions
-
-## Project summary
-
-The objective of this project is to develop and validate a reproducible bioinformatics pipeline for predicting response to anti-PD-1 immunotherapy in melanoma using transcriptomic data.
-
-The final approach uses:
-
-- Training cohort: **GSE160638**
-- External validation cohorts: **GSE91061** and **GSE78220**
-- Clinical harmonisation into `Responder` and `NonResponder`
-- Pre-treatment sample restriction when applicable
-- Gene filtering and TMM/logCPM transformation with `edgeR`
-- Differential-expression-based feature selection inside cross-validation folds
-- Random Forest modelling
-- Internal validation by cross-validation without data leakage
-- External validation on independent cohorts
-- Gene stability and biological interpretation analyses
-
-## Repository structure
-
-```text
-.
-├── scripts/          # Ordered R scripts for the full pipeline
-├── data_raw/         # Public input files used by the scripts
-├── data_processed/   # Small metadata tables; large RDS caches are regenerated by scripts
-├── results/          # Final CSV result tables
-├── figures/          # Final figures generated by the pipeline
-├── docs/             # Uploaded thesis PDF copy / delivery documents
-├── script_manifest.csv
-└── README.md
-```
-
-## Script execution order
-
-Run the scripts from the project root or from inside the `scripts/` folder.
-
-```r
-source("scripts/01_load_data.R")
-source("scripts/02_clinical_harmonization.R")
-source("scripts/03_preprocessing_train.R")
-source("scripts/04_exploratory_analysis.R")
-source("scripts/05_differential_expression_exploratory.R")
-source("scripts/06_nested_cv_final_100genes.R")
-source("scripts/07_signature_size_comparison.R")
-source("scripts/08_gene_stability_analysis.R")
-source("scripts/09_prepare_external_validation.R")
-source("scripts/10_define_common_genes_across_datasets.R")
-source("scripts/11_biological_interpretation_final_100.R")
-source("scripts/12_external_validation_final_100.R")
-source("scripts/13_gene_stability_across_datasets.R")
-```
-
-## Historical thesis results — reference only
-
-### Historical internal validation, final 100-gene signature
-
-From `results/rf_cv_metrics_summary_final_100_no_leakage.csv`:
+### Secondary pooled summary
 
 | Metric | Value |
 |---|---:|
-| Accuracy | 0.753425 |
-| Kappa | 0.506006 |
-| Sensitivity | 0.810811 |
-| Specificity | 0.694444 |
-| Balanced Accuracy | 0.752628 |
-| AUC | 0.827703 |
-| Mean best mtry | 5.200000 |
-| Unique genes selected | 292 |
-| Genes selected in ≥4 folds | 29 |
-| Genes selected in 5/5 folds | 13 |
+| AUC | 0.5718 |
+| Accuracy | 0.4474 |
+| Sensitivity | 0.8400 |
+| Specificity | 0.2549 |
+| Balanced Accuracy | 0.5475 |
 
-### Signature-size comparison
+The pooled result is retained only as a **secondary descriptive summary**
+because the two external cohorts differ in prevalence and composition.
 
-From `results_reference/signature_size_comparison_metrics.csv` / final comparison output:
+Detailed methodology is documented in
+[`docs/week4_locked_external_validation.md`](docs/week4_locked_external_validation.md).
 
-| Number of genes | AUC | Accuracy | Balanced Accuracy |
-|---:|---:|---:|---:|
-| 50 | 0.800300 | 0.712329 | 0.712087 |
-| 100 | 0.832958 | 0.767123 | 0.766517 |
-| 250 | 0.831456 | 0.780822 | 0.780405 |
-| 500 | 0.827703 | 0.780822 | 0.780030 |
+---
 
-### Historical external validation, final 100-gene model
+## Interpretation
 
-From `results/external_validation_metrics_by_dataset_final_100.csv`:
+The reconstructed analysis shows an important distinction between
+**internal predictive signal** and **external transportability**.
 
-| Dataset | AUC | Accuracy | Sensitivity | Specificity | Balanced Accuracy |
-|---|---:|---:|---:|---:|---:|
-| GSE91061 | 0.670513 | 0.612245 | 0.600000 | 0.615385 | 0.607692 |
-| GSE78220 | 0.611111 | 0.444444 | 0.000000 | 1.000000 | 0.500000 |
+The internal nested-CV AUC is:
 
-### Historical gene-stability distribution, final 100-gene signature
+`0.8896`
 
-From `results/gene_stability_summary_final_100.csv`:
+The two independent external-cohort AUCs are:
 
-| Folds selected | Number of genes |
-|---:|---:|
-| 1 | 180 |
-| 2 | 58 |
-| 3 | 25 |
-| 4 | 16 |
-| 5 | 13 |
+- GSE91061: `0.6641`
+- GSE78220: `0.6444`
 
-## Notes on reproducibility
+The difference is preserved rather than optimized away after external
+unblinding.
 
-The pipeline avoids data leakage by performing feature selection and model training inside the training partitions. External datasets are used only for final model evaluation.
+Accordingly:
 
-Large intermediate RDS files are not required in the repository because they can be regenerated by the ordered scripts. Final result tables and figures are included for traceability.
+- Week 3 performance is reported as internal nested-CV performance;
+- external validation is reported primarily by cohort;
+- the pooled external estimate remains secondary;
+- the 12-gene set remains a stability-derived deployment candidate;
+- no claim of clinical biomarker validation is made.
+
+---
+
+## Leakage safeguards
+
+Predictive preprocessing, feature selection and tuning are restricted to
+training data during model development.
+
+After external unblinding, the workflow explicitly prohibits:
+
+- gene reselection;
+- expression-representation changes;
+- model refitting;
+- hyperparameter retuning;
+- classification-threshold changes;
+- threshold optimization against external outcomes.
+
+---
+
+## Confounding and cohort heterogeneity
+
+Clinical and methodological heterogeneity were formally assessed during QA
+remediation.
+
+The assessment covers:
+
+- response-class composition;
+- age;
+- gender;
+- BRAF mutation;
+- LDH;
+- biopsy heterogeneity;
+- technical batch-metadata availability;
+- residual confounding;
+- external cohort effects.
+
+No validated technical batch variable was available in the project metadata.
+
+This limitation is documented explicitly and is not interpreted as evidence
+that batch effects are absent.
+
+See
+[`docs/confounding_assessment.md`](docs/confounding_assessment.md).
+
+---
+
+## Reproducibility
+
+The strict Week 3–4 workflow has a project-level reproducible R environment.
+
+Key files:
+
+- `renv.lock`
+- `DESCRIPTION`
+- `.Rprofile`
+- `renv/`
+- [`docs/reproducible_environment.md`](docs/reproducible_environment.md)
+
+The historical frozen Week 4 environment records:
+
+| Component | Version |
+|---|---:|
+| R | 4.5.1 |
+| edgeR | 4.6.3 |
+| caret | 7.0.1 |
+| randomForest | 4.7.1.2 |
+| pROC | 1.19.0.1 |
+
+### Restore
+
+From the repository root, using the R version recorded in `renv.lock`:
+
+~~~bash
+Rscript -e 'renv::restore(prompt = FALSE)'
+~~~
+
+### Execute the strict workflows
+
+~~~bash
+Rscript scripts/run_week3.R
+Rscript scripts/run_week4.R
+~~~
+
+A successful Week 4 reproduction terminates with:
+
+~~~text
+WEEK 4 REPRODUCTION: PASS
+~~~
+
+Week 1 and Week 2 historical foundation workflows remain available as:
+
+~~~bash
+Rscript --vanilla scripts/run_week1.R
+Rscript --vanilla scripts/run_week2.R
+~~~
+
+---
+
+## Quality assurance
+
+Three formal remediation gates were introduced after the portfolio QA review
+without changing the previously frozen Week 3 or Week 4 analytical results.
+
+| QA gate | Result |
+|---|---:|
+| U08 / P1-04 preprocessing contract | 35 PASS / 0 FAIL |
+| U11 reproducible environment | 24 PASS / 0 FAIL |
+| U07 / P1-10 confounding assessment | 15 PASS / 0 FAIL |
+| **Consolidated** | **74 PASS / 0 FAIL** |
+
+The remediation did not:
+
+- reselect genes;
+- change preprocessing retrospectively;
+- alter nested cross-validation;
+- change the frozen 12-gene set;
+- modify `samplewise_rank`;
+- refit the Week 4 model;
+- retune `mtry`;
+- change the classification threshold;
+- recompute blind predictions using response labels.
+
+The completed remediation is preserved at tag:
+
+`qa-remediation-w3-w4-complete`
+
+---
+
+## Repository structure
+
+~~~text
+.
+├── data_raw/          # Public source data
+├── data_processed/    # Validated and derived analytical objects
+├── scripts/           # Analysis, reproduction and QA scripts
+├── results/           # Analytical outputs and QA tables
+├── figures/           # Generated figures
+├── docs/              # Methodological and audit documentation
+├── DATA.md            # Data provenance and analytical contract
+├── DESCRIPTION        # R dependency contract
+├── renv.lock          # Reproducible environment snapshot
+└── README.md
+~~~
+
+---
+
+## Key documentation
+
+- [`DATA.md`](DATA.md) — data provenance and endpoint reconstruction
+- [`docs/public_artifact_manifest.md`](docs/public_artifact_manifest.md) — canonical, supporting, exploratory and historical artifact classification
+- [`docs/preprocessing_contract.md`](docs/preprocessing_contract.md) — preprocessing boundaries
+- [`docs/reproducible_environment.md`](docs/reproducible_environment.md) — reproducible environment
+- [`docs/confounding_assessment.md`](docs/confounding_assessment.md) — confounding and cohort heterogeneity
+- [`docs/week3_historical_vs_strict_stability_audit.md`](docs/week3_historical_vs_strict_stability_audit.md) — historical versus strict stability
+- [`docs/week4_locked_external_validation.md`](docs/week4_locked_external_validation.md) — locked external validation
+- [`docs/historical_thesis_results.md`](docs/historical_thesis_results.md) — historical thesis outputs retained for provenance
+
+---
+
+## Historical thesis results
+
+The repository originally accompanied the MSc thesis:
+
+**Validació i optimització d’una signatura molecular predictiva de resposta
+a immunoteràpia en melanoma mitjançant un pipeline bioinformàtic reproduïble**
+
+Historical results remain available for provenance but are separated from the
+current strict methodological conclusions.
+
+See
+[`docs/historical_thesis_results.md`](docs/historical_thesis_results.md).
+
+Original academic repository state:
+
+`tfm-original`
+
+---
 
 ## Data sources
 
-All datasets used in this project are publicly available from Gene Expression Omnibus (GEO):
+Public transcriptomic datasets:
 
 - GSE160638
 - GSE91061
 - GSE78220
 
-## Software requirements
+The authoritative GSE160638 treatment-response endpoint used in the rebuild is
+derived from supplementary clinical Table S2A associated with:
 
-The analysis was developed in R. Main packages include:
+*MYC Induces Immunotherapy and IFNγ Resistance Through Downregulation of JAK2*
 
-- `GEOquery`
-- `dplyr`
-- `readr`
-- `readxl`
-- `stringr`
-- `edgeR`
-- `randomForest`
-- `caret`
-- `pROC`
-- `ggplot2`
-- `pheatmap`
-- `clusterProfiler`
-- `org.Hs.eg.db`
-- `AnnotationDbi`
-- `ReactomePA` (optional)
+DOI: `10.1158/2326-6066.CIR-22-0184`
 
-## Important delivery note
+Full provenance is available in [`DATA.md`](DATA.md).
 
-The thesis PDF included in `docs/` is the uploaded copy. If the final written report is updated, make sure that its numerical results match the values listed above and the CSV files in `results/`.
+---
+
+## Scope and limitations
+
+This repository is a methodological bioinformatics and machine-learning
+portfolio project.
+
+It demonstrates:
+
+- reproducible cohort construction;
+- transcriptomic preprocessing;
+- nested model validation;
+- feature-stability analysis;
+- frozen external validation;
+- reproducible computational environments;
+- explicit methodological QA.
+
+It does **not** establish a clinically validated biomarker or molecular
+signature.
+
+External validation shows limited and cohort-dependent transportability of the
+current frozen deployment procedure.
+
+---
+
+## Author
+
+**Joan Carreras Díaz**
+
+MSc Bioinformatics & Biostatistics
+
+BSc Biomedical Engineering
