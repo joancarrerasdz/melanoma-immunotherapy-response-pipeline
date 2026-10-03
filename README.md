@@ -460,6 +460,20 @@ current frozen deployment procedure.
 
 ---
 
+## License and data rights
+
+Original project-authored source code is released under the
+[MIT License](LICENSE).
+
+External datasets and dataset-derived artifacts are not relicensed by this
+repository and remain subject to their original source terms and attribution
+requirements.
+
+See [NOTICE.md](NOTICE.md) for the licensing boundary and
+[DATA.md](DATA.md) for data provenance.
+
+---
+
 ## Author
 
 **Joan Carreras Díaz**
