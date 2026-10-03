@@ -1,0 +1,227 @@
+name: Repository QA
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-integrity:
+    name: Repository integrity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate public repository contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python <<'PY'
+          from pathlib import Path
+          import csv
+          import re
+          import sys
+          import urllib.parse
+
+          errors = []
+
+          # ------------------------------------------------------------
+          # 1. Required public/reproducibility files
+          # ------------------------------------------------------------
+
+          required_files = [
+              "README.md",
+              "DATA.md",
+              "DESCRIPTION",
+              "renv.lock",
+              "LICENSE",
+              "NOTICE.md",
+              "CITATION.cff",
+              "docs/preprocessing_contract.md",
+              "docs/reproducible_environment.md",
+              "docs/confounding_assessment.md",
+              "docs/week3_historical_vs_strict_stability_audit.md",
+              "docs/week4_locked_external_validation.md",
+              "docs/public_artifact_manifest.md",
+              "results/qa_preprocessing_contract_gate.csv",
+              "results/qa_reproducible_environment_gate.csv",
+              "results/qa_confounding_gate.csv",
+              "figures/week3_nested_cv_roc_strict.png",
+              "figures/week3_gene_selection_stability_strict.png",
+              "figures/week4_external_validation_roc_strict.png",
+          ]
+
+          for item in required_files:
+              p = Path(item)
+              if not p.is_file():
+                  errors.append(f"Missing required file: {item}")
+              elif p.stat().st_size == 0:
+                  errors.append(f"Required file is empty: {item}")
+
+          # ------------------------------------------------------------
+          # 2. README local links
+          # ------------------------------------------------------------
+
+          readme = Path("README.md").read_text(encoding="utf-8")
+
+          links = re.findall(
+              r'!?\[[^\]]*\]\(([^)]+)\)',
+              readme
+          )
+
+          for raw in links:
+              target = raw.strip().split()[0].strip("<>")
+
+              if (
+                  not target
+                  or target.startswith("#")
+                  or target.startswith("http://")
+                  or target.startswith("https://")
+                  or target.startswith("mailto:")
+              ):
+                  continue
+
+              target = urllib.parse.unquote(
+                  target.split("#", 1)[0]
+              )
+
+              if not Path(target).exists():
+                  errors.append(
+                      f"Broken README local link: {target}"
+                  )
+
+          # ------------------------------------------------------------
+          # 3. Citation metadata contract
+          # ------------------------------------------------------------
+
+          citation = Path("CITATION.cff").read_text(
+              encoding="utf-8"
+          )
+
+          citation_fields = [
+              "cff-version:",
+              "message:",
+              "title:",
+              "type: software",
+              "authors:",
+              "family-names:",
+              "given-names:",
+              "repository-code:",
+              "license: MIT",
+          ]
+
+          for field in citation_fields:
+              if field not in citation:
+                  errors.append(
+                      f"CITATION.cff missing field: {field}"
+                  )
+
+          # ------------------------------------------------------------
+          # 4. License contract
+          # ------------------------------------------------------------
+
+          license_text = Path("LICENSE").read_text(
+              encoding="utf-8"
+          )
+
+          if not license_text.startswith("MIT License"):
+              errors.append(
+                  "LICENSE is not recognized as the expected MIT license."
+              )
+
+          # ------------------------------------------------------------
+          # 5. Frozen methodological QA gates
+          # ------------------------------------------------------------
+
+          qa_files = [
+              "results/qa_preprocessing_contract_gate.csv",
+              "results/qa_reproducible_environment_gate.csv",
+              "results/qa_confounding_gate.csv",
+          ]
+
+          qa_rows = 0
+          qa_failures = []
+
+          for qa_file in qa_files:
+              with open(
+                  qa_file,
+                  newline="",
+                  encoding="utf-8"
+              ) as handle:
+                  rows = list(csv.DictReader(handle))
+
+              qa_rows += len(rows)
+
+              for row in rows:
+                  status = (
+                      row.get("status")
+                      or row.get("Status")
+                      or ""
+                  ).strip().upper()
+
+                  if status != "PASS":
+                      qa_failures.append(
+                          f"{qa_file}: "
+                          f"{row.get('check_id', '<unknown>')} "
+                          f"status={status!r}"
+                      )
+
+          if qa_rows != 74:
+              errors.append(
+                  f"Expected 74 methodological QA checks; "
+                  f"observed {qa_rows}."
+              )
+
+          errors.extend(qa_failures)
+
+          # ------------------------------------------------------------
+          # 6. Frozen headline results remain documented
+          # ------------------------------------------------------------
+
+          expected_readme_signals = [
+              "0.8896",
+              "0.6641",
+              "0.6444",
+              "74 PASS / 0 FAIL",
+              "12 genes",
+          ]
+
+          for signal in expected_readme_signals:
+              if signal not in readme:
+                  errors.append(
+                      f"README missing frozen public signal: {signal}"
+                  )
+
+          # ------------------------------------------------------------
+          # Final result
+          # ------------------------------------------------------------
+
+          if errors:
+              print("REPOSITORY QA: FAIL")
+              print()
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+
+          print("REPOSITORY QA: PASS")
+          print(f"Methodological QA checks: {qa_rows} PASS / 0 FAIL")
+          print("README local links: PASS")
+          print("Citation metadata contract: PASS")
+          print("License contract: PASS")
+          print("Canonical public artifacts: PASS")
+          PY
