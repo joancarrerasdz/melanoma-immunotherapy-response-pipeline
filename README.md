@@ -1,5 +1,7 @@
 # Melanoma immunotherapy response — reproducible bioinformatics pipeline
 
+[![Repository QA](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/actions/workflows/repository-qa.yml/badge.svg)](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/actions/workflows/repository-qa.yml)
+
 A reproducible transcriptomic machine-learning workflow for evaluating
 anti-PD-1 treatment response in melanoma.
 
