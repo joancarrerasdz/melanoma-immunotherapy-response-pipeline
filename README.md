@@ -23,6 +23,23 @@ remediation are complete and merged into `main`.
 
 ---
 
+## Project snapshot
+
+| Item | Current strict pipeline |
+|---|---|
+| **Clinical question** | Pre-treatment transcriptomic modelling of anti-PD-1 response in melanoma |
+| **Development cohort** | GSE160638 — 36 patients, 17,002 validated expression features |
+| **Internal validation** | 5 × 3 nested cross-validation with training-only feature selection and tuning |
+| **Internal performance** | AUC = **0.8896** from pooled outer out-of-fold predictions |
+| **Stable candidate set** | 12 genes selected in all 5 outer folds |
+| **External validation** | Locked, cohort-specific evaluation on GSE91061 (n = 49) and GSE78220 (n = 27) |
+| **External performance** | GSE91061 AUC = **0.6641**; GSE78220 AUC = **0.6444** |
+| **Reproducibility** | R + `renv`; automated methodological QA; frozen deployment and external-evaluation workflow |
+
+> **Interpretation boundary:** the AUC of 0.8896 is an **internal nested-cross-validation estimate**. External performance is reported separately and is more modest and cohort-dependent. The 12-gene set is a stability-derived candidate set, not a clinically validated biomarker.
+
+---
+
 ## Project overview
 
 ### Development cohort
