@@ -477,6 +477,16 @@ current frozen deployment procedure.
 
 ---
 
+## Citation
+
+Citation metadata for this software repository are provided in
+[`CITATION.cff`](CITATION.cff).
+
+Data sources and third-party provenance are documented separately in
+[`DATA.md`](DATA.md) and [`NOTICE.md`](NOTICE.md).
+
+---
+
 ## License and data rights
 
 Original project-authored source code is released under the
