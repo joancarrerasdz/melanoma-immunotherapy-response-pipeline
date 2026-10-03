@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+
+title: "Melanoma Immunotherapy Response Pipeline"
+
+type: software
+
+authors:
+  - family-names: "Carreras Díaz"
+    given-names: "Joan"
+
+repository-code: "https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline"
+
+license: MIT
+
+abstract: >-
+  Reproducible R pipeline for transcriptomic modelling of anti-PD-1
+  response in melanoma, using strict nested cross-validation,
+  feature-selection stability analysis, frozen model specification,
+  blind external prediction and locked cohort-specific external validation.
+
+keywords:
+  - bioinformatics
+  - biostatistics
+  - melanoma
+  - immunotherapy
+  - anti-PD-1
+  - RNA-seq
+  - machine learning
+  - nested cross-validation
+  - external validation
+  - reproducible research
