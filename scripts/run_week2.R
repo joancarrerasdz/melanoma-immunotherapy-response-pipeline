@@ -15,7 +15,7 @@
 #
 # Run from the repository root with:
 #
-#   Rscript --vanilla scripts/run_week2.R
+#   Rscript scripts/run_week2.R
 #
 # ==============================================================================
 
@@ -110,7 +110,7 @@ run_step <- function(script, label) {
 
   status <- system2(
     command = rscript,
-    args = c("--vanilla", script)
+    args = script
   )
 
   if (!identical(status, 0L)) {

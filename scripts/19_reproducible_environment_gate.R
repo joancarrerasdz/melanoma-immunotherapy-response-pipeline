@@ -93,12 +93,25 @@ add_check(
 expected_imports <- sort(
   c(
     "AnnotationDbi",
+    "BiocManager",
     "caret",
+    "clusterProfiler",
+    "dplyr",
     "edgeR",
+    "enrichplot",
+    "GEOquery",
+    "ggplot2",
     "org.Hs.eg.db",
+    "pheatmap",
     "pROC",
     "randomForest",
-    "readxl"
+    "RColorBrewer",
+    "ReactomePA",
+    "readr",
+    "readxl",
+    "renv",
+    "stringr",
+    "tibble"
   )
 )
 
@@ -134,7 +147,7 @@ add_check(
   id = "DESCRIPTION_DIRECT_DEPENDENCIES",
   criterion = "U11",
   description = paste(
-    "DESCRIPTION declares the audited strict",
+    "DESCRIPTION declares the audited direct",
     "W3-W4 direct dependencies"
   ),
   pass = setequal(imports, expected_imports),

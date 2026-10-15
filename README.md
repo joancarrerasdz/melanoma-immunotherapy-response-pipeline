@@ -351,8 +351,8 @@ WEEK 4 REPRODUCTION: PASS
 Week 1 and Week 2 historical foundation workflows remain available as:
 
 ~~~bash
-Rscript --vanilla scripts/run_week1.R
-Rscript --vanilla scripts/run_week2.R
+Rscript scripts/run_week1.R
+Rscript scripts/run_week2.R
 ~~~
 
 ---

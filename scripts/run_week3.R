@@ -34,7 +34,7 @@ run_step <- function(step, script) {
 
   status <- system2(
     command = "Rscript",
-    args = c("--vanilla", script)
+    args = script
   )
 
   if (!identical(status, 0L)) {

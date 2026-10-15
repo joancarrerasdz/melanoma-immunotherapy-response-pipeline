@@ -456,36 +456,44 @@ Detailed Week 4 methodology is documented in `docs/week4_locked_external_validat
 
 ## Reproduction
 
-The reproducible rebuild can be executed by week from the repository root.
+The complete reproducible pipeline can be executed from the repository root:
+
+```bash
+Rscript scripts/run_pipeline.R
+```
+
+The master runner executes the weekly workflows and subsequent QA gates in a fixed order, stopping immediately if any stage fails.
+
+Individual weekly workflows remain available:
 
 Week 1:
 
 ```bash
-Rscript --vanilla scripts/run_week1.R
+Rscript scripts/run_week1.R
 ```
 
 Week 2:
 
 ```bash
-Rscript --vanilla scripts/run_week2.R
+Rscript scripts/run_week2.R
 ```
 
 Week 3:
 
 ```bash
-Rscript --vanilla scripts/run_week3.R
+Rscript scripts/run_week3.R
 ```
 
 Week 4:
 
 ```bash
-Rscript --vanilla scripts/run_week4.R
+Rscript scripts/run_week4.R
 ```
 
 Required Week 1 dependencies can be installed with:
 
 ```bash
-Rscript --vanilla scripts/install_week1_dependencies.R
+Rscript scripts/install_week1_dependencies.R
 ```
 
 ## Environment and dependencies
