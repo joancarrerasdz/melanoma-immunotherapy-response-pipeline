@@ -7,6 +7,11 @@ The purpose of Week 1 is to establish a reproducible, auditable clinical and exp
 ## Primary dataset
 
 - GEO accession: `GSE160638`
+- Canonical local GEO Series Matrix: `data_raw/GSE160638_series_matrix.txt.gz`
+- The versioned local Series Matrix is used preferentially for reproducible metadata reconstruction.
+- If the canonical local Series Matrix is absent or invalid, the pipeline may retrieve the same authoritative file from NCBI GEO using the official HTTPS endpoint.
+- GEO platform annotation is not downloaded during Week 1 because GPL annotation is not required for the clinical-endpoint reconstruction or raw-count alignment performed in this project.
+- The acquisition hardening changes only data transport and availability; it does not alter the cohort definition, clinical endpoint, raw counts, sample ordering, preprocessing contract or any frozen analytical result.
 - Disease context: melanoma
 - Treatment context: anti–PD-1 immunotherapy
 - Primary analytical cohort: 36 PD1 samples
