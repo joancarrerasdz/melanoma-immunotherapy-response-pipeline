@@ -1,0 +1,6 @@
+"path","role","rows","bytes","sha256","frozen"
+"results/week3_nested_cv_summary_strict.csv","W3 pooled strict nested-CV summary",10,258,"f31eb76065607efc9a8741a5401e744c46db8dc98e1f8c5c88ab63483b0f84f3",TRUE
+"results/week3_outer_fold_metrics_strict.csv","W3 strict outer-fold metrics",5,492,"f79b13f89ef301f2abb7e1d4632663a8574543cf5ed36adee0d21a35e18e6f9a",TRUE
+"results/week3_outer_predictions_strict.csv","W3 frozen out-of-fold predictions",36,1716,"a9f3c6b1bda9127f0e28411a269554b7a46b03c59ecfe87845c9ac13cdb038ad",TRUE
+"results/week4_external_validation_metrics_strict.csv","W4 locked external-validation metrics",3,904,"d697a33be1528794e94228e516fb8504c3f10f465ba89ddae02e63d852562c11",TRUE
+"results/week4_external_validation_predictions_strict.csv","W4 locked external-validation predictions",76,8488,"8fd4b96a186dac0eccdd8cc674088f3f0da241196a8e2a9ad116b0a72dcf135c",TRUE
