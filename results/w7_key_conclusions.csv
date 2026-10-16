@@ -1,0 +1,6 @@
+"finding","value"
+"Internal discrimination","W3 OOF AUC 0.890 [0.763, 0.977]"
+"Internal balanced classification","W3 OOF balanced accuracy 0.812 [0.669, 0.929]"
+"Pooled external discrimination","AUC degradation 0.318 [0.145, 0.478]"
+"Pooled external balanced classification","Balanced-accuracy degradation 0.264 [0.098, 0.418]"
+"Pooled external probability quality","Brier degradation 0.237 [0.163, 0.310]"
