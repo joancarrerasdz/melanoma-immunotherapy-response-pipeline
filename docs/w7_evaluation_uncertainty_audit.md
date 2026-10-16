@@ -93,4 +93,3 @@ These comparisons quantify empirical performance transportability. They are not 
 Differences in cohort composition, responder prevalence, assay context and other study-specific factors remain part of the interpretation.
 
 Results are recorded in `results/w7_transportability_audit.csv`.
-

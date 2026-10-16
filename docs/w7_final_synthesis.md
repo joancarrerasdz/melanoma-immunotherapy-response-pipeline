@@ -47,4 +47,3 @@ The principal methodological conclusion is therefore not simply that the model p
 - `results/w7_key_conclusions.csv`
 - `figures/w7_transportability_uncertainty.png`
 - `docs/w7_final_synthesis.md`
-
