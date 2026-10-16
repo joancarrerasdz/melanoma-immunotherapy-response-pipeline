@@ -49,3 +49,29 @@ The pooled out-of-fold metric is reported separately because a metric computed a
 
 W7 characterizes uncertainty in already-frozen results. It does not attempt to improve predictive performance.
 
+
+## W7.4 reference baselines
+
+Frozen predictive performance is compared with simple non-informative or prevalence-aware references.
+
+- Accuracy: majority-class classifier.
+- Balanced accuracy: 0.50.
+- ROC AUC: 0.50.
+- Brier score: constant predictor equal to observed responder prevalence.
+
+For Brier score, lower values are better; for the remaining metrics, higher values are better.
+
+Results are recorded in `results/w7_reference_baseline_audit.csv`.
+
+## W7.4 prediction-level uncertainty
+
+Non-parametric bootstrap confidence intervals are calculated from already-frozen prediction records.
+
+Week 3 bootstrap samples are stratified by outcome. Week 4 cohort-specific samples are stratified by outcome, and the pooled Week 4 analysis is stratified jointly by dataset and outcome.
+
+The bootstrap uses 5,000 deterministic replicates with seed 20261016.
+
+These intervals characterize evaluation uncertainty conditional on the frozen predictions. They do not include model-training, feature-selection or hyperparameter-selection uncertainty.
+
+Results are recorded in `results/w7_metric_uncertainty.csv`.
+
