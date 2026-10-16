@@ -1,5 +1,5 @@
 # ============================================================
-# Install Week 1 dependencies
+# Restore Week 1 dependencies from renv.lock
 # ============================================================
 #
 # Tested environment:
@@ -9,52 +9,40 @@
 # dplyr    1.2.0
 # readxl   1.4.5
 #
-# This script installs missing dependencies.
-# It does not modify the analytical workflow.
+# This script restores the exact locked project environment.
+# It does not update renv.lock or the analytical workflow.
 # ============================================================
 
 
-cran_packages <- c(
-  "dplyr",
-  "readxl"
-)
-
-missing_cran <- cran_packages[
-  !vapply(
-    cran_packages,
-    requireNamespace,
-    quietly = TRUE,
-    FUN.VALUE = logical(1)
-  )
-]
-
-if (length(missing_cran) > 0L) {
-
-  install.packages(
-    missing_cran,
-    repos = "https://cloud.r-project.org"
+if (!file.exists("renv.lock")) {
+  stop(
+    "renv.lock was not found. Run this script from the repository root.",
+    call. = FALSE
   )
 }
 
-
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-
-  install.packages(
-    "BiocManager",
-    repos = "https://cloud.r-project.org"
+if (!requireNamespace("renv", quietly = TRUE)) {
+  stop(
+    "renv is unavailable. Open the project once so renv/activate.R can bootstrap it.",
+    call. = FALSE
   )
 }
 
+cat("Restoring the project library from renv.lock...\n")
+renv::restore(prompt = FALSE)
 
-if (!requireNamespace("GEOquery", quietly = TRUE)) {
-
-  BiocManager::install(
-    "GEOquery",
-    ask = FALSE,
-    update = FALSE
+activate_path <- file.path("renv", "activate.R")
+if (file.exists(activate_path)) {
+  activate_lines <- readLines(activate_path, warn = FALSE)
+  writeLines(
+    sub("[[:blank:]]+$", "", activate_lines),
+    activate_path,
+    useBytes = TRUE
   )
 }
 
+cat("Validating the restored project environment...\n")
+renv::status()
 
 required_packages <- c(
   "GEOquery",

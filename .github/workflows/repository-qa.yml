@@ -181,9 +181,9 @@ jobs:
                           f"status={status!r}"
                       )
 
-          if qa_rows != 74:
+          if qa_rows != 87:
               errors.append(
-                  f"Expected 74 methodological QA checks; "
+                  f"Expected 87 methodological QA checks; "
                   f"observed {qa_rows}."
               )
 
@@ -197,7 +197,7 @@ jobs:
               "0.8896",
               "0.6641",
               "0.6444",
-              "74 PASS / 0 FAIL",
+              "87 PASS / 0 FAIL",
               "12 genes",
           ]
 

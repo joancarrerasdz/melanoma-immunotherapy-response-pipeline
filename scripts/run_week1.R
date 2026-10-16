@@ -4,7 +4,7 @@
 #
 # Run from the repository root with:
 #
-#   Rscript --vanilla scripts/run_week1.R
+#   Rscript scripts/run_week1.R
 #
 # This runner executes the complete Week 1 rebuild:
 #
@@ -12,7 +12,7 @@
 #   2. Run automated integrity tests
 #   3. Generate descriptive QC outputs
 #
-# Each step is executed in a separate --vanilla R session.
+# Each step is executed in a separate project-activated R session.
 # ============================================================
 
 
@@ -63,7 +63,7 @@ if (length(missing_packages) > 0L) {
       "Missing Week 1 dependencies: ",
       paste(missing_packages, collapse = ", "),
       "\nRun:\n",
-      "  Rscript --vanilla scripts/install_week1_dependencies.R"
+      "  Rscript scripts/install_week1_dependencies.R"
     ),
     call. = FALSE
   )
@@ -92,10 +92,7 @@ run_step <- function(script, label) {
 
   status <- system2(
     command = rscript,
-    args = c(
-      "--vanilla",
-      script
-    )
+    args = script
   )
 
   if (!identical(status, 0L)) {

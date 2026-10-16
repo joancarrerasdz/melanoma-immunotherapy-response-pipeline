@@ -7,6 +7,11 @@ The purpose of Week 1 is to establish a reproducible, auditable clinical and exp
 ## Primary dataset
 
 - GEO accession: `GSE160638`
+- Canonical local GEO Series Matrix: `data_raw/GSE160638_series_matrix.txt.gz`
+- The versioned local Series Matrix is used preferentially for reproducible metadata reconstruction.
+- If the canonical local Series Matrix is absent or invalid, the pipeline may retrieve the same authoritative file from NCBI GEO using the official HTTPS endpoint.
+- GEO platform annotation is not downloaded during Week 1 because GPL annotation is not required for the clinical-endpoint reconstruction or raw-count alignment performed in this project.
+- The acquisition hardening changes only data transport and availability; it does not alter the cohort definition, clinical endpoint, raw counts, sample ordering, preprocessing contract or any frozen analytical result.
 - Disease context: melanoma
 - Treatment context: anti–PD-1 immunotherapy
 - Primary analytical cohort: 36 PD1 samples
@@ -456,36 +461,44 @@ Detailed Week 4 methodology is documented in `docs/week4_locked_external_validat
 
 ## Reproduction
 
-The reproducible rebuild can be executed by week from the repository root.
+The complete reproducible pipeline can be executed from the repository root:
+
+```bash
+Rscript scripts/run_pipeline.R
+```
+
+The master runner executes the weekly workflows and subsequent QA gates in a fixed order, stopping immediately if any stage fails.
+
+Individual weekly workflows remain available:
 
 Week 1:
 
 ```bash
-Rscript --vanilla scripts/run_week1.R
+Rscript scripts/run_week1.R
 ```
 
 Week 2:
 
 ```bash
-Rscript --vanilla scripts/run_week2.R
+Rscript scripts/run_week2.R
 ```
 
 Week 3:
 
 ```bash
-Rscript --vanilla scripts/run_week3.R
+Rscript scripts/run_week3.R
 ```
 
 Week 4:
 
 ```bash
-Rscript --vanilla scripts/run_week4.R
+Rscript scripts/run_week4.R
 ```
 
 Required Week 1 dependencies can be installed with:
 
 ```bash
-Rscript --vanilla scripts/install_week1_dependencies.R
+Rscript scripts/install_week1_dependencies.R
 ```
 
 ## Environment and dependencies

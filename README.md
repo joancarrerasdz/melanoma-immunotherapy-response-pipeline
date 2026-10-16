@@ -351,8 +351,8 @@ WEEK 4 REPRODUCTION: PASS
 Week 1 and Week 2 historical foundation workflows remain available as:
 
 ~~~bash
-Rscript --vanilla scripts/run_week1.R
-Rscript --vanilla scripts/run_week2.R
+Rscript scripts/run_week1.R
+Rscript scripts/run_week2.R
 ~~~
 
 ---
@@ -365,9 +365,9 @@ without changing the previously frozen Week 3 or Week 4 analytical results.
 | QA gate | Result |
 |---|---:|
 | U08 / P1-04 preprocessing contract | 35 PASS / 0 FAIL |
-| U11 reproducible environment | 24 PASS / 0 FAIL |
+| U11 reproducible environment | 37 PASS / 0 FAIL |
 | U07 / P1-10 confounding assessment | 15 PASS / 0 FAIL |
-| **Consolidated** | **74 PASS / 0 FAIL** |
+| **Consolidated** | **87 PASS / 0 FAIL** |
 
 The remediation did not:
 

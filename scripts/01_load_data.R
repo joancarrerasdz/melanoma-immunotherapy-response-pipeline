@@ -301,11 +301,149 @@ saveRDS(
 )
 
 # ===========================
-# 2. Descarregar metadata de GEO
+# 2. Load GEO metadata
 # ===========================
 
-gse <- getGEO("GSE160638", GSEMatrix = TRUE)
-eset <- gse[[1]]
+series_matrix_path <- file.path(
+  data_raw_dir,
+  "GSE160638_series_matrix.txt.gz"
+)
+
+series_matrix_url <- paste0(
+  "https://ftp.ncbi.nlm.nih.gov/geo/series/",
+  "GSE160nnn/GSE160638/matrix/",
+  "GSE160638_series_matrix.txt.gz"
+)
+
+is_valid_gzip <- function(path) {
+  if (!file.exists(path)) return(FALSE)
+
+  file_size <- file.info(path)$size
+
+  if (is.na(file_size) || file_size < 1000L) {
+    return(FALSE)
+  }
+
+  connection <- file(path, open = "rb")
+  on.exit(close(connection), add = TRUE)
+
+  signature <- readBin(
+    connection,
+    what = "raw",
+    n = 2L
+  )
+
+  identical(
+    signature,
+    as.raw(c(0x1f, 0x8b))
+  )
+}
+
+download_geo_series_matrix <- function(url, destination) {
+
+  if (is_valid_gzip(destination)) {
+    message(
+      "Using local GEO Series Matrix: ",
+      destination
+    )
+
+    return(invisible(destination))
+  }
+
+  if (file.exists(destination)) {
+    unlink(destination)
+  }
+
+  temporary_file <- tempfile(
+    pattern = "GSE160638_series_matrix_",
+    tmpdir = dirname(destination),
+    fileext = ".txt.gz"
+  )
+
+  on.exit({
+    if (file.exists(temporary_file)) {
+      unlink(temporary_file)
+    }
+  }, add = TRUE)
+
+  previous_timeout <- getOption("timeout")
+
+  on.exit(
+    options(timeout = previous_timeout),
+    add = TRUE
+  )
+
+  options(
+    timeout = max(
+      300L,
+      previous_timeout
+    )
+  )
+
+  message(
+    "Local GEO Series Matrix is unavailable; ",
+    "downloading authoritative NCBI GEO copy."
+  )
+
+  status <- utils::download.file(
+    url = url,
+    destfile = temporary_file,
+    mode = "wb",
+    method = "libcurl",
+    quiet = FALSE
+  )
+
+  if (
+    !identical(status, 0L) ||
+    !is_valid_gzip(temporary_file)
+  ) {
+    stop(
+      paste0(
+        "GSE160638 Series Matrix download failed ",
+        "or did not produce a valid gzip file."
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (!file.rename(temporary_file, destination)) {
+    stop(
+      "Could not move the GEO Series Matrix to its final location.",
+      call. = FALSE
+    )
+  }
+
+  message(
+    "Downloaded GEO Series Matrix: ",
+    destination,
+    " (",
+    file.info(destination)$size,
+    " bytes)"
+  )
+
+  invisible(destination)
+}
+
+download_geo_series_matrix(
+  series_matrix_url,
+  series_matrix_path
+)
+
+gse <- GEOquery::getGEO(
+  filename = series_matrix_path,
+  GSEMatrix = TRUE,
+  AnnotGPL = FALSE,
+  getGPL = FALSE
+)
+
+if (!inherits(gse, "ExpressionSet")) {
+  stop(
+    "Local GSE160638 Series Matrix did not produce an ExpressionSet.",
+    call. = FALSE
+  )
+}
+
+eset <- gse
 
 pheno <- pData(eset) |> as.data.frame()
 

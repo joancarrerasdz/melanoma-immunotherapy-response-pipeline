@@ -7,9 +7,22 @@ Description: Reproducible dependency contract for the strict Week 3 nested
 Encoding: UTF-8
 Imports:
     AnnotationDbi,
+    BiocManager,
     caret,
+    clusterProfiler,
+    dplyr,
     edgeR,
+    enrichplot,
+    GEOquery,
+    ggplot2,
     org.Hs.eg.db,
+    pheatmap,
     pROC,
     randomForest,
-    readxl
+    RColorBrewer,
+    ReactomePA,
+    readr,
+    readxl,
+    renv,
+    stringr,
+    tibble

@@ -38,12 +38,25 @@ The explicit project dependency contract is declared in `DESCRIPTION`.
 Direct dependencies are:
 
 - AnnotationDbi
+- BiocManager
 - caret
+- clusterProfiler
+- dplyr
 - edgeR
+- enrichplot
+- GEOquery
+- ggplot2
 - org.Hs.eg.db
+- pheatmap
 - pROC
 - randomForest
+- RColorBrewer
+- ReactomePA
+- readr
 - readxl
+- renv
+- stringr
+- tibble
 
 Transitive dependencies are captured recursively in `renv.lock`.
 
