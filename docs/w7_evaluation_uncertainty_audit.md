@@ -75,3 +75,22 @@ These intervals characterize evaluation uncertainty conditional on the frozen pr
 
 Results are recorded in `results/w7_metric_uncertainty.csv`.
 
+
+## W7.5 internal-versus-external transportability
+
+Transportability is assessed by comparing the frozen strict Week 3 out-of-fold predictions with the frozen locked Week 4 external validation predictions.
+
+For Accuracy, Balanced Accuracy and ROC AUC, the degradation gap is defined as internal minus external performance.
+
+For Brier score, where lower values are preferable, the degradation gap is defined as external minus internal.
+
+Therefore, a positive degradation gap consistently indicates poorer external performance.
+
+Gap uncertainty is estimated using 5,000 independent stratified bootstrap resamples of the frozen internal and external prediction records.
+
+These comparisons quantify empirical performance transportability. They are not interpreted as causal evidence that dataset shift alone caused the observed differences.
+
+Differences in cohort composition, responder prevalence, assay context and other study-specific factors remain part of the interpretation.
+
+Results are recorded in `results/w7_transportability_audit.csv`.
+
