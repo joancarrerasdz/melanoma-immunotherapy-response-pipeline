@@ -72,3 +72,31 @@ The final release requires:
 9. Final tagged portfolio release.
 
 Any failed gate requires review before release certification.
+
+## W8 reproducibility remediation
+
+During the W8 clean-room end-to-end regeneration audit, the protected
+Week 2 exploratory PCA numerical outputs reproduced exactly, but the
+historical PNG raster did not reproduce byte-for-byte.
+
+The historical `figures/week2_pca_exploratory.png` predates the formal
+locked `renv` reproducibility environment. Investigation showed that the
+difference was restricted to graphics rendering; PCA scores, explained
+variance and other protected analytical outputs remained unchanged.
+
+A controlled graphics-backend audit demonstrated deterministic repeated
+rendering with the Cairo PNG backend at the existing 2400 x 1800 pixel,
+300 dpi RGB output contract.
+
+Therefore W8 applies one explicit reproducibility remediation:
+
+- `scripts/04_exploratory_analysis.R` explicitly fixes the PCA PNG device
+  to `grDevices::png` with `type = "cairo"`.
+- `figures/week2_pca_exploratory.png` is regenerated under that locked
+  graphics contract.
+- No model, cohort, preprocessing logic, PCA values, predictive result,
+  threshold, feature selection or biological conclusion is changed.
+
+This remediation is a reproducibility fix rather than an analytical
+revision and is permitted by the protected-baseline exception defined
+in this contract.

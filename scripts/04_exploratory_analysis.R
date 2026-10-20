@@ -266,9 +266,11 @@ ggsave(
     "week2_pca_exploratory.png"
   ),
   plot = pca_plot,
+  device = grDevices::png,
   width = 8,
   height = 6,
-  dpi = 300
+  dpi = 300,
+  type = "cairo"
 )
 
 # -----------------------------------------------------------------------------
