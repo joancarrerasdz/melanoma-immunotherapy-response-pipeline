@@ -4,8 +4,8 @@
 
 A reproducible transcriptomic machine-learning workflow for evaluating anti-PD-1 treatment response in melanoma.
 
-**Current release:** [`v1.0.0`](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/releases/tag/v1.0.0)  
-**Status:** Reproducibility-certified portfolio release  
+**Current release:** [`v1.0.0`](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/releases/tag/v1.0.0)<br>
+**Status:** Reproducibility-certified portfolio release<br>
 **Final certification:** W8 end-to-end clean-room reproduction — **PASS**
 
 This repository reconstructs and extends an original MSc thesis analysis under a stricter methodological framework focused on:
@@ -693,5 +693,5 @@ See [`NOTICE.md`](NOTICE.md) for the licensing boundary and [`DATA.md`](DATA.md)
 
 **Joan Carreras Díaz**
 
-MSc Bioinformatics & Biostatistics  
+MSc Bioinformatics & Biostatistics<br>
 BSc Biomedical Engineering
