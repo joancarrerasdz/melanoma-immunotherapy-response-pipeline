@@ -1,0 +1,13 @@
+gene,functional_context,evidence_level,melanoma_anti_pd1_interpretation,claim_boundary,references
+DENND2A,Vesicular trafficking; guanine-nucleotide exchange factor,moderate,No direct melanoma anti-PD-1 mechanism established,Functional annotation only; response interpretation is unsupported,NCBI Gene 27147
+FCRL1,B-cell receptor co-regulation; B-cell activation,strong,Compatible with B-cell-associated immune context,Does not establish causal anti-PD-1 response,PMID 31328160; NCBI Gene 115350
+FCRL2,B-cell receptor inhibitory regulation; memory B-cell biology,strong,Compatible with B-cell-associated immune context,Does not establish causal anti-PD-1 response,PMID 21068405; NCBI Gene 79368
+MS4A1,CD20; B-cell identity and differentiation,strong,Biologically compatible with B-cell-rich/TLS-associated melanoma context,Bulk RNA does not prove TLS presence or causal response,PMID 31942075; PMID 31942071; NCBI Gene 931
+PLCG2,Immune-receptor second-messenger signalling,strong,Plausible BCR/immune-context component,No direct causal anti-PD-1 role demonstrated,NCBI Gene 5336
+RASL10B,RAS-like small-GTPase family,limited,Response-specific interpretation insufficient,No melanoma anti-PD-1 mechanism assigned,NCBI Gene 91608
+SCARF2,Scavenger-receptor-family biology and cell adhesion,moderate,Response-specific interpretation insufficient,No melanoma anti-PD-1 mechanism assigned,NCBI Gene 91179
+SDR42E1,Predicted oxidoreductase/metabolic function,limited_predicted,Response-specific interpretation insufficient,Predicted function is not evidence of immunotherapy mechanism,NCBI Gene 93517
+TICRR,DNA-replication initiation and proliferative state,strong,May reflect tumour/cellular proliferative state,General cancer biology; not anti-PD-1-specific,PMID 31275851; NCBI Gene 90381
+TLR1,Innate immune pattern recognition and cytokine signalling,strong,Plausible tumour immune-context signal,Cell of origin and direct anti-PD-1 role are not established,NCBI Gene 7096
+TRIM71,Post-transcriptional regulation; E3 ubiquitin ligase; cell state,moderate,Hypothesis-generating cellular-state context,No direct melanoma anti-PD-1 mechanism established,NCBI Gene 131405
+VARS2,Mitochondrial valyl-tRNA synthetase; mitochondrial translation,strong_molecular,May reflect mitochondrial/general cellular state,No direct melanoma anti-PD-1 mechanism established,NCBI Gene 57176
