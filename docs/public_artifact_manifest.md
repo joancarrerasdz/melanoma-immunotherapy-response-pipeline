@@ -69,7 +69,7 @@ The principal Week 3–4 remediation gates are:
 
 Their consolidated state is:
 
-- 74 PASS;
+- 87 PASS;
 - 0 FAIL.
 
 QA artifacts are evidence of methodological verification rather than primary
