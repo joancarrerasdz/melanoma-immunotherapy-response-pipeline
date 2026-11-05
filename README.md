@@ -4,7 +4,7 @@
 
 A reproducible transcriptomic machine-learning workflow for evaluating anti-PD-1 treatment response in melanoma.
 
-**Current release:** [`v1.0.1`](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/releases/tag/v1.0.1)<br>
+**Current release:** [`v1.0.2`](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/releases/tag/v1.0.2)<br>
 **Analytical baseline:** [`v1.0.0`](https://github.com/joancarrerasdz/melanoma-immunotherapy-response-pipeline/releases/tag/v1.0.0)<br>
 **Status:** Reproducibility-certified portfolio release<br>
 **Final certification:** W8 end-to-end clean-room reproduction — **PASS**
@@ -28,6 +28,8 @@ The complete Week 1–8 methodological rebuild is preserved as analytical baseli
 
 Release `v1.0.1` adds the final QA documentation for the canonical data dictionary (U03) and strict 12-gene biological interpretation (P1-11), without changing the frozen analytical results.
 
+Release `v1.0.2` completes the formal QA closure by aligning the public methodological artifact manifest with the consolidated **87 PASS / 0 FAIL** QA state. No analytical results, models, cohorts, thresholds, predictions, or frozen artifacts are changed.
+
 The original academic repository state is preserved at tag `tfm-original`.
 
 ---
@@ -45,7 +47,7 @@ The original academic repository state is preserved at tag `tfm-original`.
 | **External performance** | GSE91061 AUC = **0.6641**; GSE78220 AUC = **0.6444** |
 | **Transportability** | External performance is materially lower and more uncertain than internal performance |
 | **Reproducibility** | `renv`, automated repository QA, canonical SHA-256 manifest and clean-room end-to-end certification |
-| **Release** | `v1.0.1` — analytical baseline `v1.0.0` |
+| **Release** | `v1.0.2` — analytical baseline `v1.0.0` |
 
 > **Interpretation boundary:** the AUC of 0.8896 is an **internal nested-cross-validation estimate**. External performance is reported separately and is more modest and cohort-dependent. The 12-gene set is a stability-derived candidate set, not a clinically validated biomarker.
 
